@@ -63,7 +63,27 @@ public class MainActivity extends AppCompatActivity {
                     loginPasswordET.setError("Please input your password.");
                     return;
                 }
+
+                fAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(MainActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+                        }else{
+                            Toast.makeText(MainActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
+
+        this.noAccountBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
+            }
+        });
+
     }
 }
