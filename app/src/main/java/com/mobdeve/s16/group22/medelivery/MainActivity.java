@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText loginFNameET, loginLNameET, loginMailET, loginPasswordET;
+    EditText loginMailET, loginPasswordET;
     Button loginBtn, noAccountBtn;
     FirebaseAuth fAuth;
 
@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //this.loginFNameET = findViewById(R.id.loginFNameET);
-        //this.loginLNameET = findViewById(R.id.loginLNameET);
         this.loginMailET = findViewById(R.id.loginMailET);
         this.loginPasswordET = findViewById(R.id.loginPasswordET);
         this.loginBtn = findViewById(R.id.loginBtn);
@@ -39,20 +37,8 @@ public class MainActivity extends AppCompatActivity {
         this.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //String fname = loginFNameET.getText().toString().trim();
-                //String lname = loginLNameET.getText().toString().trim();
                 String email = loginMailET.getText().toString().trim();
                 String pass = loginPasswordET.getText().toString().trim();
-
-//                if(TextUtils.isEmpty(fname)){
-//                    registerFNameET.setError("Please input your first name.");
-//                    return;
-//                }
-
-//                if(TextUtils.isEmpty(lname)){
-//                    registerFNameET.setError("Please input your surname.");
-//                    return;
-//                }
 
                 if(TextUtils.isEmpty(email)){
                     loginMailET.setError("Please input your email address.");

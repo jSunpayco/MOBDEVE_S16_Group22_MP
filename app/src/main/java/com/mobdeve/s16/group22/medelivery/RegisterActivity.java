@@ -15,12 +15,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
     EditText registerFNameET, registerLNameET, registerMailET, registerPasswordET;
     Button registerBtn;
     FirebaseAuth fAuth;
+    FirebaseDatabase mainNode;
+    DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +32,8 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //this.registerFNameET = findViewById(R.id.registerFNameET);
-        //this.registerLNameET = findViewById(R.id.registerLNameET);
+        this.registerFNameET = findViewById(R.id.registerFNameET);
+        this.registerLNameET = findViewById(R.id.registerLNameET);
         this.registerMailET = findViewById(R.id.registerMailET);
         this.registerPasswordET = findViewById(R.id.registerPasswordET);
         this.registerBtn = findViewById(R.id.registerBtn);
@@ -44,20 +48,20 @@ public class RegisterActivity extends AppCompatActivity {
         this.registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //String fname = registerFNameET.getText().toString().trim();
-                //String lname = registerLNameET.getText().toString().trim();
+                String fname = registerFNameET.getText().toString().trim();
+                String lname = registerLNameET.getText().toString().trim();
                 String email = registerMailET.getText().toString().trim();
                 String pass = registerPasswordET.getText().toString().trim();
 
-//                if(TextUtils.isEmpty(fname)){
-//                    registerFNameET.setError("Please input your first name.");
-//                    return;
-//                }
+                if(TextUtils.isEmpty(fname)){
+                    registerFNameET.setError("Please input your first name.");
+                    return;
+                }
 
-//                if(TextUtils.isEmpty(lname)){
-//                    registerFNameET.setError("Please input your surname.");
-//                    return;
-//                }
+                if(TextUtils.isEmpty(lname)){
+                    registerFNameET.setError("Please input your surname.");
+                    return;
+                }
 
                 if(TextUtils.isEmpty(email)){
                     registerMailET.setError("Please input your email address.");
@@ -73,6 +77,16 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
+
+                            // Save Data
+                            mainNode = FirebaseDatabase.getInstance();
+                            ref = ref.getDatabase().getReference("users");
+
+                            UserDataHelper userhelper = new UserDataHelper(fname, lname, email, pass);
+
+                            ref.child(email).setValue(userhelper);
+
+                            // Start activity
                             Toast.makeText(RegisterActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
                         }else{
