@@ -6,25 +6,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
     EditText registerFNameET, registerLNameET, registerMailET, registerPasswordET;
     Button registerBtn;
     FirebaseAuth fAuth;
-    FirebaseDatabase mainNode;
-    DatabaseReference ref;
+    FirebaseFirestore fstore;
+    String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
         this.registerBtn = findViewById(R.id.registerBtn);
 
         this.fAuth = FirebaseAuth.getInstance();
+        this.fstore = FirebaseFirestore.getInstance();
 
         if(fAuth.getCurrentUser() != null){
             startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
@@ -78,13 +84,19 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
 
-                            // Save Data
-                            mainNode = FirebaseDatabase.getInstance();
-                            ref = ref.getDatabase().getReference("users");
-
-                            UserDataHelper userhelper = new UserDataHelper(fname, lname, email, pass);
-
-                            ref.child(email).setValue(userhelper);
+                            // Add to Database
+                            userID = fAuth.getCurrentUser().getUid();
+                            DocumentReference docRef = fstore.collection("users").document(userID);
+                            Map<String,Object> user = new HashMap<>();
+                            user.put("fname", fname);
+                            user.put("lname", lname);
+                            user.put("email", email);
+                            docRef.set(user).addOnSuccessListener(new OnSuccessListener<Void>(){
+                                @Override
+                                public void onSuccess(Void v){
+                                    Log.d("TAG", "Success");
+                                }
+                            });
 
                             // Start activity
                             Toast.makeText(RegisterActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
