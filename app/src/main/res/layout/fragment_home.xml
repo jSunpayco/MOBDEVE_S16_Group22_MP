@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:weightSum="2" >
+
+    <!-- 2 images in a row -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:baselineAligned="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <ImageButton
+            android:id="@+id/listIb"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_weight="0"
+            android:backgroundTint="#FFFFFF"
+            android:contentDescription="Available items"
+            android:scaleType="fitXY"
+            android:src="@drawable/list" />
+
+        <ImageButton
+            android:id="@+id/aboutIb"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_weight="0"
+            android:backgroundTint="#FFFFFF"
+            android:contentDescription="About the app"
+            android:scaleType="fitXY"
+            android:src="@drawable/about" />
+    </LinearLayout>
+
+    <!-- ............... -->
+
+
+    <!-- 2 images in a row -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:baselineAligned="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <ImageButton
+            android:id="@+id/handbookIb"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_weight="0"
+            android:backgroundTint="#FFFFFF"
+            android:scaleType="fitXY"
+            android:contentDescription="Medicine information"
+            android:src="@drawable/handbook" />
+
+        <ImageButton
+            android:id="@+id/cartIb"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_weight="0"
+            android:backgroundTint="#FFFFFF"
+            android:contentDescription="Cart list"
+            android:scaleType="fitXY"
+            android:src="@drawable/cart" />
+    </LinearLayout>
+
+</LinearLayout>

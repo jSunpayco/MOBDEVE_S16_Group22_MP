@@ -18,7 +18,7 @@
         <EditText
             android:id="@+id/registerFNameET"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="20dp"
             android:ems="10"
             android:hint="First Name"
@@ -27,7 +27,7 @@
         <EditText
             android:id="@+id/registerLNameET"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="Last Name"
@@ -36,7 +36,7 @@
         <EditText
             android:id="@+id/registerMailET"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:ems="10"
             android:hint="Email Address"
             android:inputType="textEmailAddress" />
@@ -44,7 +44,7 @@
         <EditText
             android:id="@+id/registerPasswordET"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="Password"
