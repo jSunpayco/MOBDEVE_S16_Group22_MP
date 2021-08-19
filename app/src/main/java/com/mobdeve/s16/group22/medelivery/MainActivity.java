@@ -1,75 +1,65 @@
 package com.mobdeve.s16.group22.medelivery;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText loginMailET, loginPasswordET;
-    Button loginBtn, noAccountBtn;
-    FirebaseAuth fAuth;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        this.loginMailET = findViewById(R.id.loginMailET);
-        this.loginPasswordET = findViewById(R.id.loginPasswordET);
-        this.loginBtn = findViewById(R.id.loginBtn);
-        this.noAccountBtn = findViewById(R.id.noAccountBtn);
+        // if no user is logged in, start login activity
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        }else{
 
-        this.fAuth = FirebaseAuth.getInstance();
+            setContentView(R.layout.activity_main);
 
-        this.loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = loginMailET.getText().toString().trim();
-                String pass = loginPasswordET.getText().toString().trim();
+            this.bottomNavigationView = findViewById(R.id.bottomNavigationView);
+            this.bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
 
-                if(TextUtils.isEmpty(email)){
-                    loginMailET.setError("Please input your email address.");
-                    return;
-                }
-
-                if(pass.length() < 8){
-                    loginPasswordET.setError("Please input your password.");
-                    return;
-                }
-
-                fAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(MainActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
-                        }else{
-                            Toast.makeText(MainActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
-
-        this.noAccountBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
-            }
-        });
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new HomeFragment()).commit();
+        }
     }
+
+    // bottom navigation bar manager
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem item) {
+                    Fragment selectedFragment = null;
+
+                    switch (item.getItemId()) {
+                        case R.id.homeIb:
+                            selectedFragment = new HomeFragment();
+                            break;
+                        case R.id.historyIb:
+                            selectedFragment = new HistoryFragment();
+                            break;
+                        case R.id.profileIb:
+                            selectedFragment = new AccountFragment();
+                            break;
+                    }
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                            selectedFragment).commit();
+
+                    return true;
+                }
+            };
+
 }

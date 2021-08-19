@@ -26,7 +26,7 @@ import java.util.Map;
 public class RegisterActivity extends AppCompatActivity {
 
     EditText registerFNameET, registerLNameET, registerMailET, registerPasswordET;
-    Button registerBtn;
+    Button registerBtn, goBackBtn;
     FirebaseAuth fAuth;
     FirebaseFirestore fstore;
     String userID;
@@ -35,21 +35,16 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.registerFNameET = findViewById(R.id.registerFNameET);
         this.registerLNameET = findViewById(R.id.registerLNameET);
         this.registerMailET = findViewById(R.id.registerMailET);
         this.registerPasswordET = findViewById(R.id.registerPasswordET);
         this.registerBtn = findViewById(R.id.registerBtn);
+        this.goBackBtn = findViewById(R.id.goBackBtn);
 
         this.fAuth = FirebaseAuth.getInstance();
         this.fstore = FirebaseFirestore.getInstance();
-
-        if(fAuth.getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
-            finish();
-        }
 
         this.registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,9 +93,9 @@ public class RegisterActivity extends AppCompatActivity {
                                 }
                             });
 
-                            // Start activity
                             Toast.makeText(RegisterActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
                         }else{
                             Toast.makeText(RegisterActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -108,5 +103,19 @@ public class RegisterActivity extends AppCompatActivity {
                 });
             }
         });
+
+        this.goBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                finish();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        finish();
     }
 }
