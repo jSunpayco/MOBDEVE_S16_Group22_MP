@@ -39,13 +39,14 @@ public class HomeFragment extends Fragment {
                 ((MainActivity) getActivity()).startActivity(intent);
             }
         });
-//        this.about.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                Log.d(TAG, "onClick: clicked about");
-//                startActivity(intent);
-//            }
-//        });
+        this.about.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: clicked about");
+                Intent intent = new Intent(getActivity(), AboutUsActivity.class);
+                ((MainActivity) getActivity()).startActivity(intent);
+            }
+        });
 //        this.cart.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v) {

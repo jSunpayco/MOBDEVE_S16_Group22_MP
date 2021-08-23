@@ -21,6 +21,9 @@
             android:name=".ItemListActivity"
             android:exported="true"/>
         <activity
+            android:name=".AboutUsActivity"
+            android:exported="true"/>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
