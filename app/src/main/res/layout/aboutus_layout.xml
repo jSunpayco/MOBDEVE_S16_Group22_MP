@@ -6,12 +6,13 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="409dp"
-        android:layout_height="729dp"
+        android:layout_width="380dp"
+        android:layout_height="710dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,62 +39,51 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-        <TextView
-            android:id="@+id/contactTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Contact Us"
-            android:textAlignment="center"
-            android:textStyle="bold" />
-
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_width="205dp"
+            android:layout_height="wrap_content"
+            android:gravity="center|center_horizontal"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="205dp"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            <TextView
+                android:id="@+id/contactTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Contact Us"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/name1Tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Antioquia, Anjelo"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            <TextView
+                android:id="@+id/name1Tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Antioquia, Anjelo"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-                <TextView
-                    android:id="@+id/email1Tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="anjelo_antioquia@dlsu.edu.ph"
-                    android:textAlignment="center" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/email1Tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="anjelo_antioquia@dlsu.edu.ph"
+                android:textAlignment="center" />
 
-            <LinearLayout
-                android:layout_width="205dp"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            <TextView
+                android:id="@+id/name2Tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sunpayco, Julian"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-                <TextView
-                    android:id="@+id/name2Tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sunpayco, Julian"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-                <TextView
-                    android:id="@+id/email2Tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="julian_sunpacyo@dlsu.edu.ph"
-                    android:textAlignment="center" />
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/email2Tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="julian_sunpacyo@dlsu.edu.ph"
+                android:textAlignment="center" />
         </LinearLayout>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
