@@ -12,20 +12,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medelivery">
         <activity
+            android:name=".HandbookActivity"
+            android:exported="true"
+            android:parentActivityName=".MainActivity"/>
+        <activity
             android:name=".LoginActivity"
             android:exported="true" />
         <activity
             android:name=".RegisterActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".ItemListActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".AboutUsActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".CartActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
