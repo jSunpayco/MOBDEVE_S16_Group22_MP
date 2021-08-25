@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Date"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
         <TextView
             android:id="@+id/textView23"
@@ -28,7 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Items"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
         <TextView
             android:id="@+id/textView24"
@@ -36,13 +38,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Order Status"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout5"
+        android:id="@+id/test_transaction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -75,7 +79,7 @@
                 android:id="@+id/textView21"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Crestor 10mg 28 pcs."
+                android:text="..."
                 android:textAlignment="center" />
         </LinearLayout>
 
@@ -93,10 +97,11 @@
         android:layout_width="409dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:clickable="false"
         android:gravity="clip_vertical|center_vertical"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+        app:layout_constraintTop_toBottomOf="@+id/test_transaction">
 
         <TextView
             android:id="@+id/t1"

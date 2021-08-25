@@ -14,9 +14,10 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
         <ImageButton
             android:layout_width="150dp"
@@ -41,28 +42,75 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Medicine Name"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
             <TextView
                 android:layout_width="70dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Quantity"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
             <TextView
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Amount PHP"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
             <TextView
                 android:layout_width="45dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Remove"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_weight="0"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lantus Solostar 100units/ml 5 pcs."
                 android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="3"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/textView27"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="₱450.00"
+                android:textAlignment="center" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButton4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:clickable="true"
+                app:backgroundTint="#F9B233"
+                app:srcCompat="@android:drawable/ic_delete" />
 
         </LinearLayout>
 
@@ -73,22 +121,23 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom|center"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:text="Total Amount:"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
             <TextView
                 android:layout_width="105dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="1000.00"
+                android:layout_weight="0"
+                android:text="₱450.00"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
         </LinearLayout>
 

@@ -26,6 +26,10 @@
             android:exported="true"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:name=".OverviewItemActivity"
+            android:exported="true"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".AboutUsActivity"
             android:exported="true"
             android:parentActivityName=".MainActivity" />
