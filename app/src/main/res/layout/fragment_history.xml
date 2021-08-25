@@ -4,13 +4,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HistoryFragment" >
+    tools:context=".HistoryFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginBottom="1dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView22"
+            android:layout_width="15dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Date"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/textView23"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Items"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/textView24"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Order Status"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.049">
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="15dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="08/25/2021"
+            android:textAlignment="center" />
+
+        <LinearLayout
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lantus Solostar 100units/ml 5 pcs."
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Crestor 10mg 28 pcs."
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Done"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="409dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:gravity="clip_vertical|center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+        <TextView
+            android:id="@+id/t1"
+            android:layout_width="15dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="08/26/2021"
+            android:textAlignment="center" />
+
+        <LinearLayout
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Biogesic 500mg 12pcs."
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ongoing"
+            android:textAlignment="center" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
