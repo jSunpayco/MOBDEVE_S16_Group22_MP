@@ -18,9 +18,7 @@ public class DialogConfirmation extends AppCompatDialogFragment{
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
-                        /*to be implemented: After clicking confirm, user will be redirected to history fragment with the order reflected*/
-//                        Intent intent = new Intent(getActivity(), AboutUsActivity.class);
-//                        ((MainActivity) getActivity()).startActivity(intent);
+                        getActivity().finish();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

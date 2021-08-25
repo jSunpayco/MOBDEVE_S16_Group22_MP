@@ -13,7 +13,7 @@ public class ItemsModel {
     private String itemName;
     private String itemPrice;
     private String itemQuantity;
-    private String imageUrl;
+    private String itemPath;
 
     // Default blank constructor for Firebase
     public ItemsModel() {
@@ -21,9 +21,9 @@ public class ItemsModel {
     }
 
     public ItemsModel(DocumentReference userRef, String itemName, String itemPrice, String itemQuantity,
-                      String imageUrl) {
+                      String itemPath) {
         this.userRef = userRef;
-        this.imageUrl = imageUrl;
+        this.itemPath = itemPath;
         this.setItemQuantity(itemQuantity);
         this.setItemName(itemName);
         this.setItemPrice(itemPrice);
@@ -69,11 +69,11 @@ public class ItemsModel {
         this.itemQuantity = itemQuantity;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getItemPath() {
+        return itemPath;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setItemPath(String itemPath) {
+        this.itemPath = itemPath;
     }
 }
