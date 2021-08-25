@@ -6,7 +6,7 @@
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/drawable/bottom_nav_icon_color_selector.xml" value="0.2911458333333333" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/drawable/history_background.xml" value="0.2911458333333333" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/drawable/home_background.xml" value="0.2911458333333333" />
-        <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/aboutus_layout.xml" value="0.4" />
+        <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/aboutus_layout.xml" value="0.3699731903485255" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/activity_dashboard.xml" value="0.264" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/activity_handbook.xml" value="0.17255434782608695" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/activity_login.xml" value="0.17255434782608695" />
@@ -18,6 +18,7 @@
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/fragment_account.xml" value="0.264" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/fragment_history.xml" value="0.17255434782608695" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/fragment_home.xml" value="0.264" />
+        <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/item_store_layout.xml" value="0.536" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/items_list.xml" value="0.17255434782608695" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/items_list_layout.xml" value="0.275" />
         <entry key="..\:/Users/kyoya/Desktop/MOBDEVE_S16_Group22_MP/app/src/main/res/layout/transaction_history.xml" value="0.275" />
