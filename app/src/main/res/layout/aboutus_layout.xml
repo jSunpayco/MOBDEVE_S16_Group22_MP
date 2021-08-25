@@ -16,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/aboutLogoIb"
             android:layout_width="match_parent"
             android:layout_height="500px"
             android:layout_marginTop="16dp"
@@ -27,7 +26,6 @@
             app:srcCompat="@drawable/logo" />
 
         <TextView
-            android:id="@+id/aboutBodyTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -42,7 +40,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/contactTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -51,7 +48,6 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/name1Tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Antioquia, Anjelo"
@@ -59,14 +55,12 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
-                android:id="@+id/email1Tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="anjelo_antioquia@dlsu.edu.ph"
                 android:textAlignment="center" />
 
             <TextView
-                android:id="@+id/name2Tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Sunpayco, Julian"
@@ -74,7 +68,6 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
-                android:id="@+id/email2Tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="julian_sunpacyo@dlsu.edu.ph"

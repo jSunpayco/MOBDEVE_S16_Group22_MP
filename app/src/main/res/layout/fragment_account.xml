@@ -29,7 +29,6 @@
         app:layout_constraintTop_toBottomOf="@+id/accountTitle">
 
         <TextView
-            android:id="@+id/fnameLabelTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="First Name" />
@@ -43,7 +42,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/lnameLabelTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -58,7 +56,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/emailLabelTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

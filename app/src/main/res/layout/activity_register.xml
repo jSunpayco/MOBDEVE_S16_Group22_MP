@@ -51,7 +51,6 @@
             android:inputType="textPassword" />
 
         <TextView
-            android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Your password must contain atleast 8 characters"

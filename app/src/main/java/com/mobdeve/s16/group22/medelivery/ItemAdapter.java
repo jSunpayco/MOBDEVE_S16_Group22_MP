@@ -37,6 +37,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         View v = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.item_store_layout, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
+
+        viewHolder.v.setOnClickListener
         return viewHolder;
     }
 
