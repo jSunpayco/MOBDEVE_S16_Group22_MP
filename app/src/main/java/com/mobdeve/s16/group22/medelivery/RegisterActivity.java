@@ -25,7 +25,8 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText registerFNameET, registerLNameET, registerMailET, registerPasswordET;
+    EditText registerFNameET, registerLNameET, registerMailET, registerPasswordET, registerAgeET,
+            registerAddressET;
     Button registerBtn, goBackBtn;
     FirebaseAuth fAuth;
     FirebaseFirestore fstore;
@@ -41,6 +42,8 @@ public class RegisterActivity extends AppCompatActivity {
         this.registerLNameET = findViewById(R.id.registerLNameET);
         this.registerMailET = findViewById(R.id.registerMailET);
         this.registerPasswordET = findViewById(R.id.registerPasswordET);
+        this.registerAgeET = findViewById(R.id.registerAgeET);
+        this.registerAddressET = findViewById(R.id.registerAddressET);
         this.registerBtn = findViewById(R.id.registerBtn);
         this.goBackBtn = findViewById(R.id.goBackBtn);
 
@@ -52,6 +55,8 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String fname = registerFNameET.getText().toString().trim();
                 String lname = registerLNameET.getText().toString().trim();
+                String age = registerAgeET.getText().toString().trim();
+                String address = registerAddressET.getText().toString().trim();
                 String email = registerMailET.getText().toString().trim();
                 String pass = registerPasswordET.getText().toString().trim();
 
@@ -62,6 +67,21 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if(TextUtils.isEmpty(lname)){
                     registerFNameET.setError("Please input your surname.");
+                    return;
+                }
+
+                if(TextUtils.isEmpty(age)){
+                    registerAgeET.setError("Please input your age.");
+                    return;
+                }
+
+                if(Integer.parseInt(age) > 120 || Integer.parseInt(age) < 1){
+                    registerAgeET.setError("Please input your age.");
+                    return;
+                }
+
+                if(TextUtils.isEmpty(address)){
+                    registerAddressET.setError("Please input your address.");
                     return;
                 }
 
@@ -87,6 +107,8 @@ public class RegisterActivity extends AppCompatActivity {
                             user.put("fname", fname);
                             user.put("lname", lname);
                             user.put("email", email);
+                            user.put("age", age);
+                            user.put("address", address);
                             docRef.set(user).addOnSuccessListener(new OnSuccessListener<Void>(){
                                 @Override
                                 public void onSuccess(Void v){

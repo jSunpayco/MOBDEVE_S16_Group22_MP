@@ -34,11 +34,13 @@ public class AccountFragment extends Fragment{
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
 
-        TextView myFnameTv, myLnameTv, myEmailTv;
+        TextView myFnameTv, myLnameTv, myEmailTv, myAgeTv, myAddressTv;
 
         myFnameTv = v.findViewById(R.id.myFnameTv);
         myLnameTv = v.findViewById(R.id.myLnameTv);
         myEmailTv = v.findViewById(R.id.myEmailTv);
+        myAgeTv = v.findViewById(R.id.myAgeTv);
+        myAddressTv = v.findViewById(R.id.myAddressTv);
 
 
         DocumentReference documentReference = fstore.collection("users").document(user.getUid());
@@ -53,6 +55,8 @@ public class AccountFragment extends Fragment{
                     myFnameTv.setText(value.getString("fname"));
                     myLnameTv.setText(value.getString("lname"));
                     myEmailTv.setText(value.getString("email"));
+                    myAgeTv.setText(value.getString("age"));
+                    myAddressTv.setText(value.getString("address"));
                 } else {
                     System.out.print("current data: null");
                 }

@@ -34,6 +34,24 @@
             android:inputType="textPersonName" />
 
         <EditText
+            android:id="@+id/registerAgeET"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Age"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/registerAddressET"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Address"
+            android:inputType="textPostalAddress" />
+
+        <EditText
             android:id="@+id/registerMailET"
             android:layout_width="match_parent"
             android:layout_height="48dp"
