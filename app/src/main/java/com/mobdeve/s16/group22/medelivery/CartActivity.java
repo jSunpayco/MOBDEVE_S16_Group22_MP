@@ -18,6 +18,7 @@ public class CartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cart_layout);
+        setTitle("Shopping Cart");
         this.orderBtn = findViewById(R.id.order_button);
         orderBtn.setOnClickListener(new View.OnClickListener() {
             @Override

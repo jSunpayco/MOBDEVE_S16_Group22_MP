@@ -39,6 +39,7 @@ public class ItemListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.items_list_layout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("Item Search");
 
         this.recyclerView = findViewById(R.id.itemRecyclerVIew);
         this.swipeRefreshLayout = findViewById(R.id.itemScrollView);

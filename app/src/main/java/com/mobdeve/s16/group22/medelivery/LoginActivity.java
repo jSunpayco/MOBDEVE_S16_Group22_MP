@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setTitle("Medelivery - Login");
 
         this.loginMailET = findViewById(R.id.loginMailET);
         this.loginPasswordET = findViewById(R.id.loginPasswordET);

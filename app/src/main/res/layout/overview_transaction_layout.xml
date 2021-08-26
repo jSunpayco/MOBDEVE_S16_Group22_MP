@@ -184,6 +184,22 @@
                 android:textColor="#00897B" />
         </LinearLayout>
 
+        <RatingBar
+            android:id="@+id/ratingBar3"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <EditText
+            android:id="@+id/feedbackEt"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="Feedback"
+            android:inputType="textMultiLine"
+            tools:ignore="TouchTargetSizeCheck" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

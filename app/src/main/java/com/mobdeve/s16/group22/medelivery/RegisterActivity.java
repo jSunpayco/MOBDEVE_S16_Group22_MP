@@ -35,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        setTitle("Medelivery - Register");
 
         this.registerFNameET = findViewById(R.id.registerFNameET);
         this.registerLNameET = findViewById(R.id.registerLNameET);

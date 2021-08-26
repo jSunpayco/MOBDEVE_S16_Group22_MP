@@ -15,6 +15,7 @@ public class HandbookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_handbook);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("Medicine Handbook");
 
         this.webV = findViewById(R.id.webV);
         this.webV.setWebViewClient(new WebViewClient());

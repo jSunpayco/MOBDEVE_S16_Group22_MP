@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
 
             setContentView(R.layout.activity_main);
+            setTitle("Home");
 
             this.bottomNavigationView = findViewById(R.id.bottomNavigationView);
             this.bottomNavigationView.setOnNavigationItemSelectedListener(navListener);

@@ -10,5 +10,6 @@ public class OverviewItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.overview_transaction_layout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("Transaction Details");
     }
 }
