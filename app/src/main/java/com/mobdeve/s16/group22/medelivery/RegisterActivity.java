@@ -76,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 if(Integer.parseInt(age) > 120 || Integer.parseInt(age) < 1){
-                    registerAgeET.setError("Please input your age.");
+                    registerAgeET.setError("Please input a valid age.");
                     return;
                 }
 

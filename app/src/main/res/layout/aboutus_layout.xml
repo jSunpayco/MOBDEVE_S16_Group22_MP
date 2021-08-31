@@ -20,16 +20,15 @@
             android:layout_height="500px"
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.458"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/logo" />
 
         <TextView
+            android:id="@+id/aboutTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="MeDelivery is an application to aid users in buying medicines and get it delivered to their homes. The application have tools to help and guide users in buying their medicines without having a hard time knowing which specific medicine to buy. If you find any issues within the application, please contact the developers through email. "
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -48,29 +47,29 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/authorATv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Antioquia, Anjelo"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
+                android:id="@+id/authorEmailATv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="anjelo_antioquia@dlsu.edu.ph"
                 android:textAlignment="center" />
 
             <TextView
+                android:id="@+id/authorBTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sunpayco, Julian"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
+                android:id="@+id/authorEmailBTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="julian_sunpacyo@dlsu.edu.ph"
                 android:textAlignment="center" />
         </LinearLayout>
 

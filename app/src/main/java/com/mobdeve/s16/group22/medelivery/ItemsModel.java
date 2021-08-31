@@ -9,17 +9,19 @@ public class ItemsModel {
     private int itemPrice;
     private int itemQuantity;
     private String itemPath;
+    private String itemUid;
 
     // Default blank constructor for Firebase
     public ItemsModel() {
 
     }
 
-    public ItemsModel(String itemName, int itemPrice, int itemQuantity, String itemPath) {
+    public ItemsModel(String itemName, int itemPrice, int itemQuantity, String itemPath, String itemUid) {
         this.itemPath = itemPath;
         this.itemQuantity = itemQuantity;
         this.itemPrice = itemPrice;
         this.itemName = itemName;
+        this.itemUid = itemUid;
     }
 
     public String getItemName() {
@@ -36,5 +38,9 @@ public class ItemsModel {
 
     public String getItemPath() {
         return itemPath;
+    }
+
+    public String getItemUid() {
+        return itemUid;
     }
 }

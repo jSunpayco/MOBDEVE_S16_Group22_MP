@@ -12,7 +12,14 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -26,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ItemListActivity extends AppCompatActivity {
 
@@ -33,6 +41,8 @@ public class ItemListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore;
     private FirestoreRecyclerAdapter adapter;
+    private DocumentReference cartReference;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +54,8 @@ public class ItemListActivity extends AppCompatActivity {
         this.recyclerView = findViewById(R.id.itemRecyclerVIew);
         this.swipeRefreshLayout = findViewById(R.id.itemScrollView);
         this.firebaseFirestore = FirebaseFirestore.getInstance();
+        this.user = FirebaseAuth.getInstance().getCurrentUser();
+        this.cartReference = firebaseFirestore.collection("cart").document(this.user.getUid());
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
 
@@ -77,7 +89,21 @@ public class ItemListActivity extends AppCompatActivity {
                 holder.addItemFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(view.getContext(), "Item added", Toast.LENGTH_SHORT).show();
+
+                        cartReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                DocumentSnapshot documentSnapshot = task.getResult();
+                                List<String> temp = (List<String>) documentSnapshot.get("myItems");
+                                temp.add(item.getItemUid());
+
+                                cartReference.update("myItems", temp);
+
+                                Toast.makeText(ItemListActivity.this, item.getItemName() + " added",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
                 });
             }
@@ -101,26 +127,6 @@ public class ItemListActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-    }
-
-    private void updateDataAndAdapter() {
-        FirebaseFirestore.getInstance().collection("items")
-                .orderBy("itemName")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            ArrayList<ItemsModel> im = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult())
-                                im.add(document.toObject(ItemsModel.class));
-
-                            //itemAdapter.setData(im);
-                            //itemAdapter.notifyDataSetChanged();
-                        }
-                        }
-                    }
-                );
     }
 
     @Override
