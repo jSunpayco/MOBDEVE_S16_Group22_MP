@@ -12,19 +12,17 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +30,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 public class ItemListActivity extends AppCompatActivity {
@@ -94,10 +95,37 @@ public class ItemListActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 DocumentSnapshot documentSnapshot = task.getResult();
-                                List<String> temp = (List<String>) documentSnapshot.get("myItems");
-                                temp.add(item.getItemUid());
 
-                                cartReference.update("myItems", temp);
+                                if(documentSnapshot.get(item.getItemUid()) != null){
+                                    List<String> tempList = (List<String>) documentSnapshot.get(item.getItemUid());
+
+                                    int tempStock = Integer.parseInt(tempList.get(1)) + 1;
+                                    int tempPrice = Integer.parseInt(tempList.get(2)) + item.getItemPrice();
+
+                                    tempList.set(1, String.valueOf(tempStock));
+                                    tempList.set(2, String.valueOf(tempPrice));
+
+                                    cartReference.update(item.getItemUid(), tempList);
+
+                                }else{
+                                    Map<String, Object> tempItem = new HashMap<>();
+                                    tempItem.put(item.getItemUid(), Arrays.asList(item.getItemName(),"1",
+                                            String.valueOf(item.getItemPrice())));
+
+                                    cartReference.set(tempItem, SetOptions.merge()).
+                                            addOnSuccessListener(new OnSuccessListener<Void>(){
+                                        @Override
+                                        public void onSuccess(Void v){
+                                            Log.d("TAG", "Success");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("TAG", "Error writing document", e);
+                                                }
+                                            });
+                                }
 
                                 Toast.makeText(ItemListActivity.this, item.getItemName() + " added",
                                         Toast.LENGTH_SHORT).show();

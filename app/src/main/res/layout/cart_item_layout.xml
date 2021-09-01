@@ -30,7 +30,7 @@
             android:layout_column="1"/>
 
         <Button
-            android:id="@+id/cartRemoveTv"
+            android:id="@+id/cartRemoveBtn"
             android:layout_column="1"
             android:layout_gravity="center"
             android:backgroundTint="#F9B233"

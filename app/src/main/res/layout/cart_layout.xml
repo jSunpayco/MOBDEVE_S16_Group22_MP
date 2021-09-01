@@ -59,13 +59,13 @@
                 android:layout_column="1"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:text="Remove"
+                android:text="Remove (1)"
                 android:textSize="16dp"
                 android:textStyle="bold" />
         </TableRow>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/cartRecycler"
+            android:id="@+id/cartRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
