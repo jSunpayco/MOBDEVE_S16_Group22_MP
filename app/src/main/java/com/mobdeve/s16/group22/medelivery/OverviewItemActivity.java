@@ -8,7 +8,7 @@ public class OverviewItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.overview_transaction_layout);
+        setContentView(R.layout.activity_transactions);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("Transaction Details");
     }

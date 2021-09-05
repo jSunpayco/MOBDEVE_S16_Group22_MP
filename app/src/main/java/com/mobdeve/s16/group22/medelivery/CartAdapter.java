@@ -1,6 +1,5 @@
 package com.mobdeve.s16.group22.medelivery;
 
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ public class CartAdapter {
 
     public CartViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.cart_item_layout, parent, false);
+                .inflate(R.layout.cart_item, parent, false);
         CartViewHolder cartViewHolder = new CartViewHolder(v);
         return cartViewHolder;
     }
@@ -37,11 +36,15 @@ public class CartAdapter {
             public void onClick(View view) {
                 int temp;
 
-                temp = mCart.get(position).getCartQuantity() - 1;
+                temp = Integer.parseInt(mCart.get(position).getCartQuantity()) - 1;
 
+                // More than one stock of item in cart
                 if(temp >= 1){
-                    mCart.get(position).setCartQuantity(temp);
-                }else{
+                    mCart.get(position).setCartQuantity(String.valueOf(temp));
+                    int price = Integer.parseInt(mCart.get(position).getCartPrice()) -
+                            ( Integer.parseInt(mCart.get(position).getCartPrice()) / (temp+1) );
+                    mCart.get(position).setCartPrice(String.valueOf(price));
+                }else{ // Zero stock of item in cart
                     mCart.remove(position);
                 }
             }

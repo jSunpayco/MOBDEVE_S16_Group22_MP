@@ -1,20 +1,26 @@
 package com.mobdeve.s16.group22.medelivery;
 
+import java.util.List;
+
 public class CartModel {
 
     private String cartItem;
-    private int cartQuantity;
-    private int cartPrice;
+    private String cartQuantity;
+    private String cartPrice;
+    private String cartUid;
 
     // Default blank constructor for Firebase
     public CartModel() {
     }
 
-    public CartModel(String cartItem, int cartQuantity, int cartPrice) {
+    public CartModel(String cartItem, String cartQuantity, String cartPrice, String cartUid) {
         this.cartItem = cartItem;
-        this.cartQuantity = cartQuantity;
-        this.cartPrice = cartPrice;
+        this.cartItem = cartQuantity;
+        this.cartItem = cartPrice;
+        this.cartItem = cartUid;
     }
+    //
+
 
     public String getCartItem() {
         return cartItem;
@@ -24,19 +30,28 @@ public class CartModel {
         this.cartItem = cartItem;
     }
 
-    public int getCartQuantity() {
+    public String getCartQuantity() {
         return cartQuantity;
     }
 
-    public void setCartQuantity(int cartQuantity) {
+    public void setCartQuantity(String cartQuantity) {
         this.cartQuantity = cartQuantity;
     }
 
-    public int getCartPrice() {
+    public String getCartPrice() {
         return cartPrice;
     }
 
-    public void setCartPrice(int cartPrice) {
+    public void setCartPrice(String cartPrice) {
         this.cartPrice = cartPrice;
     }
+
+    public String getCartUid() {
+        return cartUid;
+    }
+
+    public void setCartUid(String cartUid) {
+        this.cartUid = cartUid;
+    }
+
 }

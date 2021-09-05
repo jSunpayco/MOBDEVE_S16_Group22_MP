@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.Toast;
 
 
@@ -48,7 +50,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.items_list_layout);
+        setContentView(R.layout.activity_itemlist);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("Item Search");
 
@@ -71,7 +73,7 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public ItemViewHolder onCreateViewHolder(ViewGroup parent, int ViewType){
                 View v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_detail_layout, parent, false);
+                        .inflate(R.layout.item_detail, parent, false);
 
                 return new ItemViewHolder(v);
             }
@@ -96,35 +98,48 @@ public class ItemListActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 DocumentSnapshot documentSnapshot = task.getResult();
 
-                                if(documentSnapshot.get(item.getItemUid()) != null){
-                                    List<String> tempList = (List<String>) documentSnapshot.get(item.getItemUid());
+                                List<Map<String, String>> carts = (List<Map<String, String>>)
+                                        documentSnapshot.get("myCart");
 
-                                    int tempStock = Integer.parseInt(tempList.get(1)) + 1;
-                                    int tempPrice = Integer.parseInt(tempList.get(2)) + item.getItemPrice();
+                                if(carts.size() == 0){
+                                    Map<String, String> addCart = new HashMap<String, String>();
 
-                                    tempList.set(1, String.valueOf(tempStock));
-                                    tempList.set(2, String.valueOf(tempPrice));
+                                    addCart.put("cartName", item.getItemName());
+                                    addCart.put("cartUid", item.getItemUid());
+                                    addCart.put("cartQuantity", String.valueOf(1));
+                                    addCart.put("cartPrice", String.valueOf(item.getItemPrice()));
 
-                                    cartReference.update(item.getItemUid(), tempList);
-
+                                    cartReference.update("myCart", FieldValue.arrayUnion(addCart));
                                 }else{
-                                    Map<String, Object> tempItem = new HashMap<>();
-                                    tempItem.put(item.getItemUid(), Arrays.asList(item.getItemName(),"1",
-                                            String.valueOf(item.getItemPrice())));
+                                    for (Map<String, String> map : carts) {
+                                        if(map.containsValue(item.getItemUid())){
+                                            for (Map.Entry<String, String> entry : map.entrySet()) {
+                                                String key = entry.getKey();
+                                                String value = entry.getValue();
 
-                                    cartReference.set(tempItem, SetOptions.merge()).
-                                            addOnSuccessListener(new OnSuccessListener<Void>(){
-                                        @Override
-                                        public void onSuccess(Void v){
-                                            Log.d("TAG", "Success");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.w("TAG", "Error writing document", e);
+                                                if(key.equals("cartQuantity")){
+                                                    int temp = Integer.parseInt(value) + 1;
+                                                    entry.setValue(String.valueOf(temp));
                                                 }
-                                            });
+
+                                                if(key.equals("cartPrice")){
+                                                    int temp = Integer.parseInt(value) + item.getItemPrice();
+                                                    entry.setValue(String.valueOf(temp));
+                                                }
+                                            }
+
+                                            cartReference.update("myCart", carts);
+                                        }else{
+                                            Map<String, String> addCart = new HashMap<String, String>();
+
+                                            addCart.put("cartName", item.getItemName());
+                                            addCart.put("cartUid", item.getItemUid());
+                                            addCart.put("cartQuantity", String.valueOf(1));
+                                            addCart.put("cartPrice", String.valueOf(item.getItemPrice()));
+
+                                            cartReference.update("myCart", FieldValue.arrayUnion(addCart));
+                                        }
+                                    }
                                 }
 
                                 Toast.makeText(ItemListActivity.this, item.getItemName() + " added",

@@ -1,11 +1,11 @@
 package com.mobdeve.s16.group22.medelivery;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,21 +14,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CartActivity extends AppCompatActivity {
 
     private Button orderBtn;
+    private TextView cartTotalTv;
 
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore;
@@ -39,7 +44,7 @@ public class CartActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.cart_layout);
+        setContentView(R.layout.activity_cart);
         setTitle("Shopping Cart");
 
         this.recyclerView = findViewById(R.id.cartRecyclerView);
@@ -51,13 +56,18 @@ public class CartActivity extends AppCompatActivity {
         this.cartReference = firebaseFirestore.collection("cart").document(this.user.getUid());
 
         /*
-            Get list
-            Make array list of cart model
-                set total price of each item
-                get quantity
+            Get cart data
         */
 
+        cartReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                CartModel cart = documentSnapshot.toObject(CartModel.class);
+            }
+        });
+
         this.orderBtn = findViewById(R.id.checkoutBtn);
+        this.cartTotalTv = findViewById(R.id.cartTotalTv);
 
         orderBtn.setOnClickListener(new View.OnClickListener() {
             @Override

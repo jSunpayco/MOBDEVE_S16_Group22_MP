@@ -5,8 +5,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -17,7 +15,7 @@ public class AboutUsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.aboutus_layout);
+        setContentView(R.layout.activity_aboutus);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("About Us");
 
@@ -25,11 +23,11 @@ public class AboutUsActivity extends AppCompatActivity {
 
         TextView aboutTv, authorATv, authorBTv, authorEmailATv, authorEmailBTv;
 
-        aboutTv = findViewById(R.id.myFnameTv);
-        authorATv = findViewById(R.id.myLnameTv);
-        authorBTv = findViewById(R.id.myEmailTv);
-        authorEmailATv = findViewById(R.id.myAgeTv);
-        authorEmailBTv = findViewById(R.id.myAddressTv);
+        aboutTv = findViewById(R.id.aboutTv);
+        authorATv = findViewById(R.id.authorATv);
+        authorBTv = findViewById(R.id.authorBTv);
+        authorEmailATv = findViewById(R.id.authorEmailATv);
+        authorEmailBTv = findViewById(R.id.authorEmailBTv);
 
 
         DocumentReference documentReference = fstore.collection("information").document("finalInformation");
