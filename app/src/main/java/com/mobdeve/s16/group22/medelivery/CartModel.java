@@ -1,10 +1,8 @@
 package com.mobdeve.s16.group22.medelivery;
 
-import java.util.List;
-
 public class CartModel {
 
-    private String cartItem;
+    private String cartName;
     private String cartQuantity;
     private String cartPrice;
     private String cartUid;
@@ -13,21 +11,21 @@ public class CartModel {
     public CartModel() {
     }
 
-    public CartModel(String cartItem, String cartQuantity, String cartPrice, String cartUid) {
-        this.cartItem = cartItem;
-        this.cartItem = cartQuantity;
-        this.cartItem = cartPrice;
-        this.cartItem = cartUid;
+    public CartModel(String cartName, String cartQuantity, String cartPrice, String cartUid) {
+        this.cartName = cartName;
+        this.cartQuantity = cartQuantity;
+        this.cartPrice = cartPrice;
+        this.cartUid = cartUid;
     }
     //
 
 
-    public String getCartItem() {
-        return cartItem;
+    public String getCartName() {
+        return cartName;
     }
 
-    public void setCartItem(String cartItem) {
-        this.cartItem = cartItem;
+    public void setCartName(String cartName) {
+        this.cartName = cartName;
     }
 
     public String getCartQuantity() {

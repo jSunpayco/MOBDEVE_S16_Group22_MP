@@ -3,43 +3,51 @@ package com.mobdeve.s16.group22.medelivery;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CartActivity extends AppCompatActivity {
 
-    private Button orderBtn;
+    private Button checkoutBtn;
     private TextView cartTotalTv;
 
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseUser user;
+    private FirestoreRecyclerAdapter adapter;
     private DocumentReference cartReference;
-    private CartAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,29 +55,80 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
         setTitle("Shopping Cart");
 
-        this.recyclerView = findViewById(R.id.cartRecyclerView);
-        this.recyclerView.setHasFixedSize(true);
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.checkoutBtn = findViewById(R.id.checkoutBtn);
+        this.cartTotalTv = findViewById(R.id.cartTotalTv);
 
+        this.recyclerView = findViewById(R.id.cartRecyclerView);
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
         this.cartReference = firebaseFirestore.collection("cart").document(this.user.getUid());
 
-        /*
-            Get cart data
-        */
+        Query q = this.cartReference.collection("myCart");
 
-        cartReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        FirestoreRecyclerOptions<CartModel> options = new FirestoreRecyclerOptions.Builder<CartModel>()
+                .setQuery(q, CartModel.class)
+                .build();
+
+        this.adapter = new FirestoreRecyclerAdapter<CartModel, CartViewHolder>(options){
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                CartModel cart = documentSnapshot.toObject(CartModel.class);
+            public CartViewHolder onCreateViewHolder(ViewGroup parent, int ViewType){
+                View v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.cart_item, parent, false);
+
+                return new CartViewHolder(v);
             }
-        });
 
-        this.orderBtn = findViewById(R.id.checkoutBtn);
-        this.cartTotalTv = findViewById(R.id.cartTotalTv);
+            @Override
+            protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull CartModel cart) {
 
-        orderBtn.setOnClickListener(new View.OnClickListener() {
+                String name = cart.getCartName();
+                holder.cartNameTv.setText(name.substring(0,name.indexOf(" ")));
+                holder.cartPriceTv.setText("₱ " + String.valueOf(cart.getCartPrice()));
+                holder.cartStockTv.setText("Qty: " + String.valueOf(cart.getCartQuantity()));
+
+                holder.cartRemoveBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        int tempQuantity = Integer.parseInt(cart.getCartQuantity()) - 1;
+
+                        if(tempQuantity == 0){
+                            getSnapshots().getSnapshot(position).getReference().delete();
+                        }else{
+                            int tempPrice = Integer.parseInt(cart.getCartPrice()) -
+                                    (Integer.parseInt(cart.getCartPrice()) / (tempQuantity + 1));
+
+                            cart.setCartPrice(String.valueOf(tempPrice));
+                            cart.setCartQuantity(String.valueOf(tempQuantity));
+
+                            holder.cartPriceTv.setText("₱ " + String.valueOf(cart.getCartPrice()));
+                            holder.cartStockTv.setText("Qty: " + String.valueOf(cart.getCartQuantity()));
+
+                            cartReference.collection("myCart").document(cart.getCartUid()).
+                                    update("cartQuantity", String.valueOf(tempQuantity),
+                                            "cartPrice", String.valueOf(tempPrice));
+                        }
+
+                        updateTotal();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(FirebaseFirestoreException e) {
+                Log.e("error", e.getMessage());
+            }
+
+        };
+
+        this.adapter.notifyDataSetChanged();
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        this.recyclerView.setLayoutManager(mLayoutManager);
+        this.recyclerView.setAdapter(this.adapter);
+
+        updateTotal();
+
+        checkoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder confirm = new AlertDialog.Builder(CartActivity.this);
@@ -89,6 +148,37 @@ public class CartActivity extends AppCompatActivity {
                          dialogInterface.dismiss();
                    }
                 });
+
+                confirm.show();
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.adapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.adapter.stopListening();
+    }
+
+    protected void updateTotal(){
+        cartReference.collection("myCart")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    int count = 0;
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        int price = Integer.parseInt(document.getString("cartPrice"));
+                        count = count + price;
+                    }
+                    cartTotalTv.setText(String.valueOf(count));
+                }
             }
         });
     }
