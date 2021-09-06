@@ -75,7 +75,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cartRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginBottom="36dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -118,13 +118,38 @@
                 android:textSize="18dp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/prescriptionBtn"
+                android:layout_width="160dp"
+                android:layout_height="50dp"
+                android:backgroundTint="#F9B233"
+                android:text="Prescription"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/errorImageTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:textSize="18dp"
+                android:textColor="#FF0000"
+                android:maxLength="28"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
         <Button
             android:id="@+id/checkoutBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="50dp"
             android:backgroundTint="#F9B233"
             android:text="Checkout"
             android:textSize="16sp" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

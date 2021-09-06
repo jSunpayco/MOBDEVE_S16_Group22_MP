@@ -1,7 +1,12 @@
 package com.mobdeve.s16.group22.medelivery;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +15,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,28 +33,35 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.ByteArrayOutputStream;
+import java.util.UUID;
 
 public class CartActivity extends AppCompatActivity {
 
-    private Button checkoutBtn;
-    private TextView cartTotalTv;
+    private Button checkoutBtn, prescriptionBtn;
+    private TextView cartTotalTv, errorImageTv;
 
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseUser user;
     private FirestoreRecyclerAdapter adapter;
     private DocumentReference cartReference;
+    private FirebaseStorage storage;
+
+    private Bitmap bitmap;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+
+    private boolean isUpload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +69,11 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
         setTitle("Shopping Cart");
 
+        this.storage = FirebaseStorage.getInstance();
+
         this.checkoutBtn = findViewById(R.id.checkoutBtn);
+        this.prescriptionBtn = findViewById(R.id.prescriptionBtn);
+        this.errorImageTv = findViewById(R.id.errorImageTv);
         this.cartTotalTv = findViewById(R.id.cartTotalTv);
 
         this.recyclerView = findViewById(R.id.cartRecyclerView);
@@ -82,7 +100,8 @@ public class CartActivity extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull CartModel cart) {
 
                 String name = cart.getCartName();
-                holder.cartNameTv.setText(name.substring(0,name.indexOf(" ")));
+                //holder.cartNameTv.setText(name.substring(0,name.indexOf(" ")));
+                holder.cartNameTv.setText(cart.getCartName());
                 holder.cartPriceTv.setText("₱ " + String.valueOf(cart.getCartPrice()));
                 holder.cartStockTv.setText("Qty: " + String.valueOf(cart.getCartQuantity()));
 
@@ -128,6 +147,18 @@ public class CartActivity extends AppCompatActivity {
 
         updateTotal();
 
+        this.activityResultLauncher = registerForActivityResult(new
+                ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if(result.getResultCode() == RESULT_OK && result.getData() != null){
+                    Bundle bundle = result.getData().getExtras();
+                    bitmap = (Bitmap) bundle.get("data");
+                }
+            }
+        });
+
         checkoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,18 +169,29 @@ public class CartActivity extends AppCompatActivity {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        finish();
+                        if(uploadPrescription()){
+                            bitmap = null;
+                            dialogInterface.dismiss();
+                            finish();
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialogInterface, int i) {
-                         dialogInterface.dismiss();
+                       dialogInterface.dismiss();
                    }
                 });
 
                 confirm.show();
+            }
+        });
+
+        prescriptionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                activityResultLauncher.launch(i);
             }
         });
     }
@@ -164,6 +206,11 @@ public class CartActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         this.adapter.stopListening();
+    }
+
+    @Override
+    public void onBackPressed() {
+        CartActivity.super.onBackPressed();
     }
 
     protected void updateTotal(){
@@ -181,6 +228,39 @@ public class CartActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    protected boolean uploadPrescription(){
+        if(bitmap != null){
+            StorageReference reference = storage.getReference().child("prescriptions/" +
+                    UUID.randomUUID().toString());
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+
+            UploadTask uploadTask = reference.putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(CartActivity.this, e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                    isUpload = false;
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(CartActivity.this, "Upload Success",
+                            Toast.LENGTH_SHORT).show();
+                    isUpload = true;
+                }
+            });
+        }else{
+            errorImageTv.setText("Please upload a prescription");
+            isUpload = false;
+        }
+
+        return isUpload;
     }
 
 }
