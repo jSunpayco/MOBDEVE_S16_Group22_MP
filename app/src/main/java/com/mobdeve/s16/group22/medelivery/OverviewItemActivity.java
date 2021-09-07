@@ -49,8 +49,10 @@ public class OverviewItemActivity extends AppCompatActivity {
         this.user = FirebaseAuth.getInstance().getCurrentUser();
         this.recyclerView = findViewById(R.id.transactionRecyclerView);
         this.OverviewItemReference = firebaseFirestore.collection("transactions").document(this.user.getUid());
+        //String id = OverviewItemReference.collection("transactions").document().getId();
+        String id = "Ivh3RfW8yKIM8QAUOenD";
+        Query q = this.OverviewItemReference.collection("myTransactions").document(id).collection("itemList");
 
-        Query q = this.OverviewItemReference.collection("myTransactions");
         FirestoreRecyclerOptions<OverviewItemModel> options = new FirestoreRecyclerOptions.Builder<OverviewItemModel>()
                 .setQuery(q, OverviewItemModel.class)
                 .build();
@@ -58,7 +60,8 @@ public class OverviewItemActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull OverviewItemViewHolder holder, int position, @NonNull OverviewItemModel model) {
                 String name = model.getMedicineName();
-                holder.medicineNameTv.setText(name.substring(0, name.indexOf(" ")));
+                //holder.medicineNameTv.setText(name.substring(0, name.indexOf(" ")));
+                holder.medicineNameTv.setText("eksdi");
                 holder.priceTv.setText("₱ " + String.valueOf(model.getPrice()));
                 holder.quantityTv.setText("Qty: " + String.valueOf(model.getQuantity()));
             }

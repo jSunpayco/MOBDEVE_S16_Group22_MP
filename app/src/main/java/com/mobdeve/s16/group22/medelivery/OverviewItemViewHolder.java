@@ -18,5 +18,4 @@ public class OverviewItemViewHolder extends RecyclerView.ViewHolder{
         this.quantityTv = (TextView) itemView.findViewById(R.id.quantityTv);
         this.priceTv = (TextView) itemView.findViewById(R.id.priceTv);
     }
-
 }
