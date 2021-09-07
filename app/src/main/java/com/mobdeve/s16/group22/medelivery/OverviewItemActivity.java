@@ -41,31 +41,23 @@ public class OverviewItemActivity extends AppCompatActivity {
         setContentView(R.layout.activity_transactions);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("Transaction Details");
-
         this.dateTv = findViewById(R.id.dateTv);
         this.totalAmountTv = findViewById(R.id.totalAmountTv);
         this.statusTv = findViewById(R.id.statusTv);
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
+
         this.recyclerView = findViewById(R.id.transactionRecyclerView);
-        this.OverviewItemReference = firebaseFirestore.collection("transactions").document(this.user.getUid());
+        this.OverviewItemReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
         //String id = OverviewItemReference.collection("transactions").document().getId();
-        String id = "Ivh3RfW8yKIM8QAUOenD";
+        String id = "KWSP5KRCRFLAsCXLg2pJ";
         Query q = this.OverviewItemReference.collection("myTransactions").document(id).collection("itemList");
 
         FirestoreRecyclerOptions<OverviewItemModel> options = new FirestoreRecyclerOptions.Builder<OverviewItemModel>()
                 .setQuery(q, OverviewItemModel.class)
                 .build();
-        this.adapter = new FirestoreRecyclerAdapter<OverviewItemModel, OverviewItemViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull OverviewItemViewHolder holder, int position, @NonNull OverviewItemModel model) {
-                String name = model.getMedicineName();
-                //holder.medicineNameTv.setText(name.substring(0, name.indexOf(" ")));
-                holder.medicineNameTv.setText("eksdi");
-                holder.priceTv.setText("₱ " + String.valueOf(model.getPrice()));
-                holder.quantityTv.setText("Qty: " + String.valueOf(model.getQuantity()));
-            }
 
+        this.adapter = new FirestoreRecyclerAdapter<OverviewItemModel, OverviewItemViewHolder>(options) {
             @Override
             public OverviewItemViewHolder onCreateViewHolder(ViewGroup parent, int ViewType) {
                 View v = LayoutInflater.from(parent.getContext())
@@ -73,11 +65,19 @@ public class OverviewItemActivity extends AppCompatActivity {
 
                 return new OverviewItemViewHolder(v);
             }
+            @Override
+            protected void onBindViewHolder(@NonNull OverviewItemViewHolder holder, int position, @NonNull OverviewItemModel model) {
+                String name = model.getMedicineName();
+                holder.medicineNameTv.setText(name);
+                holder.priceTv.setText("₱ " + String.valueOf(model.getPrice()));
+                holder.quantityTv.setText("Qty: " + String.valueOf(model.getQuantity()));
+            }
         };
-        this.adapter.notifyDataSetChanged();
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         this.recyclerView.setLayoutManager(mLayoutManager);
         this.recyclerView.setAdapter(this.adapter);
+        this.adapter.notifyDataSetChanged();
+
 
         //updateTotal();
     }

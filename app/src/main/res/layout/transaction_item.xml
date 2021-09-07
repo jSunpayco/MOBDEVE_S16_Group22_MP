@@ -24,7 +24,7 @@
                 android:padding="10dp"
                 android:text="Medicine Name"
                 android:textSize="16dp"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/quantityTv"
@@ -35,7 +35,7 @@
                 android:padding="10dp"
                 android:text="Quantity"
                 android:textSize="16dp"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/priceTv"
@@ -46,7 +46,7 @@
                 android:padding="10dp"
                 android:text="Price"
                 android:textSize="16dp"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
 
         </TableRow>
 
