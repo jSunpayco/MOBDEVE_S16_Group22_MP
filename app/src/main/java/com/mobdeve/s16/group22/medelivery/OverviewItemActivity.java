@@ -30,7 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.jetbrains.annotations.NotNull;
 
 public class OverviewItemActivity extends AppCompatActivity {
-    private TextView dateTv,totalAmountTv,statusTv;
+    private TextView dateTv,totalAmountTv,statusTv,idTV;
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseUser user;
@@ -46,6 +46,7 @@ public class OverviewItemActivity extends AppCompatActivity {
         this.dateTv = findViewById(R.id.dateTv);
         this.totalAmountTv = findViewById(R.id.totalAmountTv);
         this.statusTv = findViewById(R.id.statusTv);
+        this.idTV = findViewById(R.id.idTV);
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -65,6 +66,7 @@ public class OverviewItemActivity extends AppCompatActivity {
                 if(value != null && value.exists()) {
                     dateTv.setText(value.getString("date"));
                     statusTv.setText(value.getString("status"));
+                    idTV.setText(value.getString("transactionID"));
                 } else {
                     System.out.print("current data: null");
                 }

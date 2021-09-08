@@ -1,5 +1,6 @@
 package com.mobdeve.s16.group22.medelivery;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -8,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +29,11 @@ public class HistoryFragment extends Fragment {
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseUser user;
+    private FirebaseAuth mAuth;
     private FirestoreRecyclerAdapter adapter;
     private DocumentReference HistoryReference;
     private View view;
-    //private LinearLayout transaction_item;
-
+    public String CurrentTransactionId;
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -39,12 +42,13 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_history, container, false);
+        this.mAuth = FirebaseAuth.getInstance();
         this.firebaseFirestore = FirebaseFirestore.getInstance();
-        this.user = FirebaseAuth.getInstance().getCurrentUser();
+        this.user = mAuth.getCurrentUser();
         this.recyclerView = view.findViewById(R.id.historyRecyclerView);
         this.HistoryReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
+        Log.d("TAG", "User ID: " + this.user.getUid());
         Query q = this.HistoryReference.collection("myTransactions");
 
         FirestoreRecyclerOptions<HistoryModel> options = new FirestoreRecyclerOptions.Builder<HistoryModel>()
@@ -56,17 +60,26 @@ public class HistoryFragment extends Fragment {
             public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int ViewType) {
                 View v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.history_list, parent, false);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getActivity(), OverviewItemActivity.class);
+                        startActivity(i);
+                    }
+                });
+
 
                 return new HistoryViewHolder(v);
             }
             @Override
             protected void onBindViewHolder(@NonNull HistoryViewHolder holder, int position, @NonNull HistoryModel model) {
+                Log.d("TAG", "Set Text: " + String.valueOf(model.getDate()));
                 holder.historyDate.setText(String.valueOf(model.getDate()));
                 holder.historyStatus.setText(String.valueOf(model.getStatus()));
                 holder.TransactionID.setText(String.valueOf(model.getTransactionID()));
             }
         };
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager mLayoutManager = new LinearLayoutManagerWrapper(getContext(), LinearLayoutManager.VERTICAL, false);
         this.recyclerView.setLayoutManager(mLayoutManager);
         this.recyclerView.setAdapter(this.adapter);
         this.adapter.notifyDataSetChanged();
@@ -84,5 +97,24 @@ public class HistoryFragment extends Fragment {
     public void onStop() {
         super.onStop();
         this.adapter.stopListening();
+    }
+    public class LinearLayoutManagerWrapper extends LinearLayoutManager {
+
+        public LinearLayoutManagerWrapper(Context context) {
+            super(context);
+        }
+
+        public LinearLayoutManagerWrapper(Context context, int orientation, boolean reverseLayout) {
+            super(context, orientation, reverseLayout);
+        }
+
+        public LinearLayoutManagerWrapper(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        @Override
+        public boolean supportsPredictiveItemAnimations() {
+            return false;
+        }
     }
 }

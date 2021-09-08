@@ -5,16 +5,15 @@ public class HistoryModel {
     private String date;
     private String transactionID;
     private String status;
-    //private ItemList
+
 
     public HistoryModel(){
 
     }
-    public HistoryModel(String date, String transactionID, String status/*List itemList?*/){
+    public HistoryModel(String date, String transactionID, String status){
         this.date = date;
         this.transactionID = transactionID;
         this.status = status;
-        //this.itemlist = itemlist
     }
 
     public String getDate() {
