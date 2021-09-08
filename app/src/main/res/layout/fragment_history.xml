@@ -86,46 +86,13 @@
             android:textAlignment="center" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/historyRecyclerView"
         android:layout_width="409dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:clickable="false"
-        android:gravity="clip_vertical|center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/test_transaction">
+        android:layout_height="659dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/t1"
-            android:layout_width="15dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="08/26/2021"
-            android:textAlignment="center" />
-
-        <LinearLayout
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Biogesic 500mg 12pcs."
-                android:textAlignment="center" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView17"
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Ongoing"
-            android:textAlignment="center" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

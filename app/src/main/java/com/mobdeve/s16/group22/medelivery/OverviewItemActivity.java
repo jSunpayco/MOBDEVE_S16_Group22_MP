@@ -19,6 +19,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -34,7 +36,7 @@ public class OverviewItemActivity extends AppCompatActivity {
     private FirebaseUser user;
     private FirestoreRecyclerAdapter adapter;
     private DocumentReference OverviewItemReference;
-
+    private String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,9 +52,24 @@ public class OverviewItemActivity extends AppCompatActivity {
         this.recyclerView = findViewById(R.id.transactionRecyclerView);
         this.OverviewItemReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
         //String id = OverviewItemReference.collection("transactions").document().getId();
-        String id = "KWSP5KRCRFLAsCXLg2pJ";
+        id = "KWSP5KRCRFLAsCXLg2pJ"; //To be coded
         Query q = this.OverviewItemReference.collection("myTransactions").document(id).collection("itemList");
-
+        DocumentReference documentReference = this.OverviewItemReference.collection("myTransactions").document(id);
+        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot value, FirebaseFirestoreException error) {
+                if(error!=null) {
+                    System.err.println("Listen Failed:" + error);
+                    return;
+                }
+                if(value != null && value.exists()) {
+                    dateTv.setText(value.getString("date"));
+                    statusTv.setText(value.getString("status"));
+                } else {
+                    System.out.print("current data: null");
+                }
+            }
+        });
         FirestoreRecyclerOptions<OverviewItemModel> options = new FirestoreRecyclerOptions.Builder<OverviewItemModel>()
                 .setQuery(q, OverviewItemModel.class)
                 .build();
@@ -79,7 +96,7 @@ public class OverviewItemActivity extends AppCompatActivity {
         this.adapter.notifyDataSetChanged();
 
 
-        //updateTotal();
+        updateTotal();
     }
 
     @Override
@@ -94,20 +111,20 @@ public class OverviewItemActivity extends AppCompatActivity {
         this.adapter.stopListening();
     }
 
-//    protected void updateTotal(){
-//        OverviewItemReference.collection("myTransactions")
-//                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    int count = 0;
-//                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                        int price = Integer.parseInt(document.getString("itemPrice"));
-//                        count = count + price;
-//                    }
-//                    totalAmountTv.setText(String.valueOf(count));
-//                }
-//            }
-//        });
-//    }
+    protected void updateTotal(){
+        OverviewItemReference.collection("myTransactions").document(id).collection("itemList")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    int count = 0;
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        int price = Integer.parseInt(document.getString("price"));
+                        count = count + price;
+                    }
+                    totalAmountTv.setText("Total Amount: ₱" + String.valueOf(count));
+                }
+            }
+        });
+    }
 }

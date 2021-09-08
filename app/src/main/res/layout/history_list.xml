@@ -8,47 +8,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="1,2,3"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TableRow
-            android:id="@+id/transaction_item_table"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/medicineNameTv"
+                android:id="@+id/historyDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:text="Medicine Name"
-                android:textSize="16dp"
-                android:textStyle="normal" />
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textSize="16dp" />
 
             <TextView
-                android:id="@+id/quantityTv"
+                android:id="@+id/TransactionID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:text="Quantity"
-                android:textSize="16dp"
-                android:textStyle="normal" />
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textSize="16dp" />
 
             <TextView
-                android:id="@+id/priceTv"
+                android:id="@+id/historyStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:text="Price"
-                android:textSize="16dp"
-                android:textStyle="normal" />
-
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textSize="16dp" />
         </TableRow>
 
     </TableLayout>

@@ -1,13 +1,9 @@
 package com.mobdeve.s16.group22.medelivery;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.jetbrains.annotations.NotNull;
 
 public class OverviewItemViewHolder extends RecyclerView.ViewHolder{
     public TextView medicineNameTv, quantityTv, priceTv;
