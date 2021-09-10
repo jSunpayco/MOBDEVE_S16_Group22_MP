@@ -17,6 +17,12 @@ public class CartModel {
         this.cartPrice = cartPrice;
         this.cartUid = cartUid;
     }
+
+    public CartModel(String cartName, String cartQuantity, String cartPrice) {
+        this.cartName = cartName;
+        this.cartQuantity = cartQuantity;
+        this.cartPrice = cartPrice;
+    }
     //
 
 

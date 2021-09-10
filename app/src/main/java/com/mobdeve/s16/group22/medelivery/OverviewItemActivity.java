@@ -1,11 +1,13 @@
 package com.mobdeve.s16.group22.medelivery;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,32 +37,39 @@ public class OverviewItemActivity extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
     private FirebaseUser user;
     private FirestoreRecyclerAdapter adapter;
-    private DocumentReference OverviewItemReference;
+    private DocumentReference overviewItemReference;
     private String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transactions);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("Transaction Details");
+
         this.dateTv = findViewById(R.id.dateTv);
         this.totalAmountTv = findViewById(R.id.totalAmountTv);
         this.statusTv = findViewById(R.id.statusTv);
         this.idTV = findViewById(R.id.idTV);
+
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
 
+        Intent i = getIntent();
+
         this.recyclerView = findViewById(R.id.transactionRecyclerView);
-        this.OverviewItemReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
-        //String id = OverviewItemReference.collection("transactions").document().getId();
-        id = "KWSP5KRCRFLAsCXLg2pJ"; //To be coded
-        Query q = this.OverviewItemReference.collection("myTransactions").document(id).collection("itemList");
-        DocumentReference documentReference = this.OverviewItemReference.collection("myTransactions").document(id);
+        this.overviewItemReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
+        id = i.getStringExtra("TRANSACTION_REFERENCE"); //KWSP5KRCRFLAsCXLg2pJ
+        DocumentReference documentReference = this.overviewItemReference.collection("myTransactions").
+                document(id);
+        Query q = documentReference.collection("itemList");
+
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot value, FirebaseFirestoreException error) {
                 if(error!=null) {
-                    System.err.println("Listen Failed:" + error);
+                    Toast.makeText(OverviewItemActivity.this,"Listen Failed:" + error,
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(value != null && value.exists()) {
@@ -68,10 +77,12 @@ public class OverviewItemActivity extends AppCompatActivity {
                     statusTv.setText(value.getString("status"));
                     idTV.setText(value.getString("transactionID"));
                 } else {
-                    System.out.print("current data: null");
+                    Toast.makeText(OverviewItemActivity.this,"Current data: null",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
         FirestoreRecyclerOptions<OverviewItemModel> options = new FirestoreRecyclerOptions.Builder<OverviewItemModel>()
                 .setQuery(q, OverviewItemModel.class)
                 .build();
@@ -114,7 +125,7 @@ public class OverviewItemActivity extends AppCompatActivity {
     }
 
     protected void updateTotal(){
-        OverviewItemReference.collection("myTransactions").document(id).collection("itemList")
+        overviewItemReference.collection("myTransactions").document(id).collection("itemList")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

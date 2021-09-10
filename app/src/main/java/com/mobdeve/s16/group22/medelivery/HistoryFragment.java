@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -31,13 +30,12 @@ public class HistoryFragment extends Fragment {
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private FirestoreRecyclerAdapter adapter;
-    private DocumentReference HistoryReference;
+    private DocumentReference historyReference;
     private View view;
-    public String CurrentTransactionId;
+
     public HistoryFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,9 +45,9 @@ public class HistoryFragment extends Fragment {
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.user = mAuth.getCurrentUser();
         this.recyclerView = view.findViewById(R.id.historyRecyclerView);
-        this.HistoryReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
+        this.historyReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
         Log.d("TAG", "User ID: " + this.user.getUid());
-        Query q = this.HistoryReference.collection("myTransactions");
+        Query q = this.historyReference.collection("myTransactions");
 
         FirestoreRecyclerOptions<HistoryModel> options = new FirestoreRecyclerOptions.Builder<HistoryModel>()
                 .setQuery(q, HistoryModel.class)
@@ -59,34 +57,40 @@ public class HistoryFragment extends Fragment {
             @Override
             public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int ViewType) {
                 View v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.history_list, parent, false);
-                v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(getActivity(), OverviewItemActivity.class);
-                        startActivity(i);
-                    }
-                });
-
+                        .inflate(R.layout.history_item, parent, false);
 
                 return new HistoryViewHolder(v);
             }
+
             @Override
             protected void onBindViewHolder(@NonNull HistoryViewHolder holder, int position, @NonNull HistoryModel model) {
                 Log.d("TAG", "Set Text: " + String.valueOf(model.getDate()));
                 holder.historyDate.setText(String.valueOf(model.getDate()));
                 holder.historyStatus.setText(String.valueOf(model.getStatus()));
                 holder.TransactionID.setText(String.valueOf(model.getTransactionID()));
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(getActivity(), OverviewItemActivity.class);
+                        DocumentReference documentReference = historyReference.
+                                collection("myTransactions").document(model.getTransactionID());
+                        String temp = model.getTransactionID();
+                        i.putExtra("TRANSACTION_REFERENCE", temp);
+                        startActivity(i);
+                    }
+                });
             }
         };
-        LinearLayoutManager mLayoutManager = new LinearLayoutManagerWrapper(getContext(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManagerWrapper(getContext(),
+                LinearLayoutManager.VERTICAL, false);
         this.recyclerView.setLayoutManager(mLayoutManager);
         this.recyclerView.setAdapter(this.adapter);
         this.adapter.notifyDataSetChanged();
 
-
         return view;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -98,6 +102,7 @@ public class HistoryFragment extends Fragment {
         super.onStop();
         this.adapter.stopListening();
     }
+
     public class LinearLayoutManagerWrapper extends LinearLayoutManager {
 
         public LinearLayoutManagerWrapper(Context context) {
