@@ -125,7 +125,7 @@
 
             <Button
                 android:id="@+id/prescriptionBtn"
-                android:layout_width="160dp"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:backgroundTint="#F9B233"
                 android:text="Prescription"

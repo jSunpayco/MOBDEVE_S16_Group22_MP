@@ -56,10 +56,11 @@ public class OverviewItemActivity extends AppCompatActivity {
         this.user = FirebaseAuth.getInstance().getCurrentUser();
 
         Intent i = getIntent();
+        id = i.getStringExtra("TRANSACTION_REFERENCE");
 
         this.recyclerView = findViewById(R.id.transactionRecyclerView);
         this.overviewItemReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
-        id = i.getStringExtra("TRANSACTION_REFERENCE"); //KWSP5KRCRFLAsCXLg2pJ
+
         DocumentReference documentReference = this.overviewItemReference.collection("myTransactions").
                 document(id);
         Query q = documentReference.collection("itemList");
@@ -76,6 +77,7 @@ public class OverviewItemActivity extends AppCompatActivity {
                     dateTv.setText(value.getString("date"));
                     statusTv.setText(value.getString("status"));
                     idTV.setText(value.getString("transactionID"));
+                    totalAmountTv.setText("Total Amount: ₱" + value.getString("totalAmount"));
                 } else {
                     Toast.makeText(OverviewItemActivity.this,"Current data: null",
                             Toast.LENGTH_SHORT).show();
@@ -83,11 +85,11 @@ public class OverviewItemActivity extends AppCompatActivity {
             }
         });
 
-        FirestoreRecyclerOptions<OverviewItemModel> options = new FirestoreRecyclerOptions.Builder<OverviewItemModel>()
-                .setQuery(q, OverviewItemModel.class)
+        FirestoreRecyclerOptions<CartModel> options = new FirestoreRecyclerOptions.Builder<CartModel>()
+                .setQuery(q, CartModel.class)
                 .build();
 
-        this.adapter = new FirestoreRecyclerAdapter<OverviewItemModel, OverviewItemViewHolder>(options) {
+        this.adapter = new FirestoreRecyclerAdapter<CartModel, OverviewItemViewHolder>(options) {
             @Override
             public OverviewItemViewHolder onCreateViewHolder(ViewGroup parent, int ViewType) {
                 View v = LayoutInflater.from(parent.getContext())
@@ -96,20 +98,16 @@ public class OverviewItemActivity extends AppCompatActivity {
                 return new OverviewItemViewHolder(v);
             }
             @Override
-            protected void onBindViewHolder(@NonNull OverviewItemViewHolder holder, int position, @NonNull OverviewItemModel model) {
-                String name = model.getMedicineName();
-                holder.medicineNameTv.setText(name);
-                holder.priceTv.setText("₱ " + String.valueOf(model.getPrice()));
-                holder.quantityTv.setText("Qty: " + String.valueOf(model.getQuantity()));
+            protected void onBindViewHolder(@NonNull OverviewItemViewHolder holder, int position, @NonNull CartModel model) {
+                holder.medicineNameTv.setText(model.getCartName());
+                holder.priceTv.setText("₱ " + String.valueOf(model.getCartPrice()));
+                holder.quantityTv.setText("Qty: " + String.valueOf(model.getCartQuantity()));
             }
         };
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         this.recyclerView.setLayoutManager(mLayoutManager);
         this.recyclerView.setAdapter(this.adapter);
         this.adapter.notifyDataSetChanged();
-
-
-        updateTotal();
     }
 
     @Override
@@ -122,22 +120,5 @@ public class OverviewItemActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         this.adapter.stopListening();
-    }
-
-    protected void updateTotal(){
-        overviewItemReference.collection("myTransactions").document(id).collection("itemList")
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    int count = 0;
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        int price = Integer.parseInt(document.getString("price"));
-                        count = count + price;
-                    }
-                    totalAmountTv.setText("Total Amount: ₱" + String.valueOf(count));
-                }
-            }
-        });
     }
 }

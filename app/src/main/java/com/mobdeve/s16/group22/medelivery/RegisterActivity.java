@@ -100,7 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
 
-                            // Add to Database
+                            // Add user details to Database
                             userID = fAuth.getCurrentUser().getUid();
                             DocumentReference docRef = fstore.collection("users").document(userID);
                             Map<String,Object> user = new HashMap<>();
@@ -109,12 +109,16 @@ public class RegisterActivity extends AppCompatActivity {
                             user.put("email", email);
                             user.put("age", age);
                             user.put("address", address);
-                            docRef.set(user).addOnSuccessListener(new OnSuccessListener<Void>(){
-                                @Override
-                                public void onSuccess(Void v){
-                                    Log.d("TAG", "Success");
-                                }
-                            });
+                            docRef.set(user);
+
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("filler", "filler");
+                            fstore.collection("transaction").document(userID).set(data);
+                            fstore.collection("cart").document(userID).set(data);
+
+                            /*fstore.collection("transaction").document(userID)
+                                    .collection("myTransactions").document("sampleTransaction")
+                                    .delete();*/
 
                             Toast.makeText(RegisterActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));

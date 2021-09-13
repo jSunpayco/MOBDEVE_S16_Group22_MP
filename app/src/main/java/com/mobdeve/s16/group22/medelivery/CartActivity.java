@@ -1,10 +1,9 @@
 package com.mobdeve.s16.group22.medelivery;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -34,6 +33,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -44,6 +44,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class CartActivity extends AppCompatActivity {
@@ -60,6 +64,7 @@ public class CartActivity extends AppCompatActivity {
 
     private Bitmap bitmap;
     private ActivityResultLauncher<Intent> activityResultLauncher;
+    private int total;
 
     private boolean isUpload;
 
@@ -75,6 +80,8 @@ public class CartActivity extends AppCompatActivity {
         this.prescriptionBtn = findViewById(R.id.prescriptionBtn);
         this.errorImageTv = findViewById(R.id.errorImageTv);
         this.cartTotalTv = findViewById(R.id.cartTotalTv);
+
+        this.errorImageTv.setText("");
 
         this.recyclerView = findViewById(R.id.cartRecyclerView);
         this.firebaseFirestore = FirebaseFirestore.getInstance();
@@ -169,11 +176,27 @@ public class CartActivity extends AppCompatActivity {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if(uploadPrescription()){
-                            bitmap = null;
-                            dialogInterface.dismiss();
-                            finish();
-                        }
+                        cartReference.collection("myCart")
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if(task.getResult().size() > 0) {
+                                                dialogInterface.dismiss();
+                                                uploadPrescription();
+                                            } else {
+                                                Toast.makeText(CartActivity.this,
+                                                        "Add items to cart",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else {
+                                            Toast.makeText(CartActivity.this,
+                                                    "Add items to cart",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -225,12 +248,13 @@ public class CartActivity extends AppCompatActivity {
                         count = count + price;
                     }
                     cartTotalTv.setText(String.valueOf(count));
+                    total = count;
                 }
             }
         });
     }
 
-    protected boolean uploadPrescription(){
+    protected void uploadPrescription(){
         if(bitmap != null){
             StorageReference reference = storage.getReference().child("prescriptions/" +
                     UUID.randomUUID().toString());
@@ -245,22 +269,74 @@ public class CartActivity extends AppCompatActivity {
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(CartActivity.this, e.getMessage(),
                             Toast.LENGTH_SHORT).show();
-                    isUpload = false;
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(CartActivity.this, "Upload Success",
-                            Toast.LENGTH_SHORT).show();
-                    isUpload = true;
+                    addToCart();
                 }
             });
         }else{
             errorImageTv.setText("Please upload a prescription");
-            isUpload = false;
         }
-
-        return isUpload;
     }
 
+    protected void addToCart(){
+        Map<String,Object> transaction = new HashMap<>();
+
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat("yyyy/MM/dd");
+        Calendar calendar = Calendar.getInstance();
+        String date = dateFormat.format(calendar.getTime());
+
+        transaction.put("date", date);
+        transaction.put("status", "Pending");
+        transaction.put("totalAmount", String.valueOf(total));
+
+        //
+        DocumentReference docRef = firebaseFirestore
+                .collection("transaction")
+                .document(user.getUid());
+
+        docRef.collection("myTransactions")
+                .add(transaction).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                transaction.put("transactionID", documentReference.getId());
+                documentReference.update(transaction);
+                addItems(documentReference.getId());
+            }
+        });
+
+        //TODO ERROR HANDLING
+
+
+        bitmap = null;
+        finish();
+    }
+
+    protected void addItems(String _id){
+        cartReference.collection("myCart")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                CartModel cart = document.toObject(CartModel.class);
+                                firebaseFirestore.collection("transaction").document(user.getUid())
+                                        .collection("myTransactions").document(_id)
+                                        .collection("itemList").document(cart.getCartUid())
+                                        .set(cart);
+                                document.getReference().delete();
+                            }
+                            Toast.makeText(CartActivity.this, "Items added",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(CartActivity.this, "Error adding items",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 }
