@@ -2,11 +2,12 @@ package com.mobdeve.s16.group22.medelivery;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -27,17 +26,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class OverviewItemActivity extends AppCompatActivity {
+public class TransactionActivity extends AppCompatActivity {
     private TextView dateTv,totalAmountTv,statusTv,idTV;
     private TextView feedBackTV;
+    private EditText feedbackEt;
     private Button submitBtn;
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore;
@@ -50,14 +46,15 @@ public class OverviewItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_transactions);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("Transaction Details");
 
         this.dateTv = findViewById(R.id.dateTv);
         this.totalAmountTv = findViewById(R.id.totalAmountTv);
         this.statusTv = findViewById(R.id.statusTv);
         this.idTV = findViewById(R.id.idTV);
+        this.feedbackEt = findViewById(R.id.feedbackEt);
         this.feedBackTV = findViewById(R.id.feedbackEt);
         this.submitBtn = findViewById(R.id.submitBtn);
 
@@ -78,7 +75,7 @@ public class OverviewItemActivity extends AppCompatActivity {
             @Override
             public void onEvent(DocumentSnapshot value, FirebaseFirestoreException error) {
                 if(error!=null) {
-                    Toast.makeText(OverviewItemActivity.this,"Listen Failed:" + error,
+                    Toast.makeText(TransactionActivity.this,"Listen Failed:" + error,
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -88,8 +85,13 @@ public class OverviewItemActivity extends AppCompatActivity {
                     idTV.setText(value.getString("transactionID"));
                     totalAmount =  value.getString("totalAmount");
                     totalAmountTv.setText("Total Amount: ₱" + totalAmount);
+
+                    if(value.getString("status").equals("Done")){
+                        feedbackEt.setText(value.getString("feedback"));
+                    }
+
                 } else {
-                    Toast.makeText(OverviewItemActivity.this,"Current data: null",
+                    Toast.makeText(TransactionActivity.this,"Current data: null",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -99,16 +101,16 @@ public class OverviewItemActivity extends AppCompatActivity {
                 .setQuery(q, CartModel.class)
                 .build();
 
-        this.adapter = new FirestoreRecyclerAdapter<CartModel, OverviewItemViewHolder>(options) {
+        this.adapter = new FirestoreRecyclerAdapter<CartModel, TransactionViewHolder>(options) {
             @Override
-            public OverviewItemViewHolder onCreateViewHolder(ViewGroup parent, int ViewType) {
+            public TransactionViewHolder onCreateViewHolder(ViewGroup parent, int ViewType) {
                 View v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.transaction_item, parent, false);
 
-                return new OverviewItemViewHolder(v);
+                return new TransactionViewHolder(v);
             }
             @Override
-            protected void onBindViewHolder(@NonNull OverviewItemViewHolder holder, int position, @NonNull CartModel model) {
+            protected void onBindViewHolder(@NonNull TransactionViewHolder holder, int position, @NonNull CartModel model) {
                 holder.medicineNameTv.setText(model.getCartName());
                 holder.priceTv.setText("₱ " + String.valueOf(model.getCartPrice()));
                 holder.quantityTv.setText("Qty: " + String.valueOf(model.getCartQuantity()));
@@ -135,7 +137,7 @@ public class OverviewItemActivity extends AppCompatActivity {
                 feedback.put("transactionID",currentId);
 
                 documentReference.set(feedback);
-                Toast.makeText(OverviewItemActivity.this, "Submitted Feedback", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TransactionActivity.this, "Submitted Feedback", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -150,5 +152,16 @@ public class OverviewItemActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         this.adapter.stopListening();
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if (count == 0) {
+            super.onBackPressed();
+            //additional code
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
     }
 }

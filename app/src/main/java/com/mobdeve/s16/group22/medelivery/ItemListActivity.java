@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -49,9 +50,9 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_itemlist);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("Item Search");
 
         this.recyclerView = findViewById(R.id.itemRecyclerVIew);
         this.swipeRefreshLayout = findViewById(R.id.itemScrollView);

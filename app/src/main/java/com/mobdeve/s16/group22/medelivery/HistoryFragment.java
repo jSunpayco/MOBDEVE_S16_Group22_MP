@@ -72,9 +72,7 @@ public class HistoryFragment extends Fragment {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent i = new Intent(getActivity(), OverviewItemActivity.class);
-                        DocumentReference documentReference = historyReference.
-                                collection("myTransactions").document(model.getTransactionID());
+                        Intent i = new Intent(getActivity(), TransactionActivity.class);
                         String temp = model.getTransactionID();
                         i.putExtra("TRANSACTION_REFERENCE", temp);
                         startActivity(i);

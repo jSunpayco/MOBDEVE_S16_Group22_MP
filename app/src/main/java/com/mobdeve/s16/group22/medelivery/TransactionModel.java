@@ -1,15 +1,15 @@
 package com.mobdeve.s16.group22.medelivery;
 
 
-public class OverviewItemModel {
+public class TransactionModel {
     private String medicineName;
     private String quantity;
     private String price;
 
-    public OverviewItemModel(){
+    public TransactionModel(){
 
     }
-    public OverviewItemModel(String medicineName, String quantity, String price) {
+    public TransactionModel(String medicineName, String quantity, String price) {
         this.medicineName = medicineName;
         this.quantity = quantity;
         this.price = price;

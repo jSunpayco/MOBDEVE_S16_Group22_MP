@@ -5,10 +5,10 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public class OverviewItemViewHolder extends RecyclerView.ViewHolder{
+public class TransactionViewHolder extends RecyclerView.ViewHolder{
     public TextView medicineNameTv, quantityTv, priceTv;
 
-    public OverviewItemViewHolder(View itemView) {
+    public TransactionViewHolder(View itemView) {
         super(itemView);
         this.medicineNameTv = (TextView) itemView.findViewById(R.id.medicineNameTv);
         this.quantityTv = (TextView) itemView.findViewById(R.id.quantityTv);

@@ -1,6 +1,7 @@
 package com.mobdeve.s16.group22.medelivery;
 
 import android.os.Bundle;
+import android.view.Window;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,9 +16,9 @@ public class AboutUsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_aboutus);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("About Us");
 
         FirebaseFirestore fstore = FirebaseFirestore.getInstance();
 

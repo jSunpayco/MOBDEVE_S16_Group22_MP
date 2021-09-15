@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         // if no user is logged in, start login activity
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
@@ -27,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
 
             setContentView(R.layout.activity_main);
-            setTitle("Home");
 
             this.bottomNavigationView = findViewById(R.id.bottomNavigationView);
             this.bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
