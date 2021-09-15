@@ -341,14 +341,9 @@ public class CartActivity extends AppCompatActivity {
                                         .collection("itemList").document(cart.getCartUid())
                                         .set(cart);
                                 document.getReference().delete();
+                                adapter.notifyDataSetChanged();
                             }
                             uploadPrescription(_id);
-                        } else {
-                            firebaseFirestore.collection("transaction").document(user.getUid())
-                                    .collection("myTransactions").document(_id)
-                                    .delete();
-                            Toast.makeText(CartActivity.this, "Error adding items. Please try again.",
-                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
