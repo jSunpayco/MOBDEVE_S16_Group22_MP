@@ -23,6 +23,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -89,62 +92,68 @@ public class ItemListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        cartReference.collection("myCart").document(item.getItemUid()).
-                                get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                DocumentSnapshot documentSnapshot = task.getResult();
+                        if(item.getItemQuantity() > 0){
+                            cartReference.collection("myCart").document(item.getItemUid()).
+                                    get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    DocumentSnapshot documentSnapshot = task.getResult();
 
-                                if(documentSnapshot.exists()){
-                                    //item in cart
-                                    CartModel tempCart = documentSnapshot.toObject(CartModel.class);
-                                    int tempQ, tempP;
+                                    if(documentSnapshot.exists()){
+                                        //item in cart
+                                        CartModel tempCart = documentSnapshot.toObject(CartModel.class);
 
-                                    tempQ = Integer.parseInt(tempCart.getCartQuantity()) + 1;
-                                    tempP = Integer.parseInt(tempCart.getCartPrice()) + item.getItemPrice();
+                                        int tempQ, tempP;
 
-                                    cartReference.collection("myCart").document(item.getItemUid()).
-                                            update("cartQuantity", String.valueOf(tempQ),
-                                                    "cartPrice", String.valueOf(tempP))
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(ItemListActivity.this, item.getItemName() +
-                                                            " added", Toast.LENGTH_SHORT).show();
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(ItemListActivity.this, "Error: " + e,
-                                                            Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                }else{
-                                    Map<String, Object> data = new HashMap<>();
-                                    data.put("cartUid", item.getItemUid());
-                                    data.put("cartName", item.getItemName());
-                                    data.put("cartQuantity", String.valueOf(1));
-                                    data.put("cartPrice", String.valueOf(item.getItemPrice()));
+                                        tempQ = Integer.parseInt(tempCart.getCartQuantity()) + 1;
+                                        tempP = Integer.parseInt(tempCart.getCartPrice()) + item.getItemPrice();
 
-                                    cartReference.collection("myCart").document(item.getItemUid()).
-                                            set(data).addOnSuccessListener(new OnSuccessListener<Void>(){
-                                        @Override
-                                        public void onSuccess(Void v){
-                                            Toast.makeText(ItemListActivity.this, item.getItemName() +
-                                                            " added", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(ItemListActivity.this, "Error: " + e,
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                        cartReference.collection("myCart").document(item.getItemUid()).
+                                                update("cartQuantity", String.valueOf(tempQ),
+                                                        "cartPrice", String.valueOf(tempP))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(ItemListActivity.this, item.getItemName() +
+                                                                " added", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(ItemListActivity.this, "Error: " + e,
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                    }else{
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("cartUid", item.getItemUid());
+                                        data.put("cartName", item.getItemName());
+                                        data.put("cartQuantity", String.valueOf(1));
+                                        data.put("cartPrice", String.valueOf(item.getItemPrice()));
+
+                                        cartReference.collection("myCart").document(item.getItemUid()).
+                                                set(data).addOnSuccessListener(new OnSuccessListener<Void>(){
+                                            @Override
+                                            public void onSuccess(Void v){
+                                                Toast.makeText(ItemListActivity.this, item.getItemName() +
+                                                        " added", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(ItemListActivity.this, "Error: " + e,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+
+                                    item.setItemQuantity(item.getItemQuantity() - 1);
+                                    firebaseFirestore.collection("items").document(item.getItemUid())
+                                            .update("itemQuantity", item.getItemQuantity());
                                 }
-                            }
-                        });
-
+                            });
+                        }
                     }
                 });
             }

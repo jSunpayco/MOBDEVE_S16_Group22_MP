@@ -1,10 +1,12 @@
 package com.mobdeve.s16.group22.medelivery;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,8 +47,10 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -118,6 +122,8 @@ public class CartActivity extends AppCompatActivity {
 
                         int tempQuantity = Integer.parseInt(cart.getCartQuantity()) - 1;
 
+                        newValue(cart.getCartUid());
+
                         if(tempQuantity == 0){
                             getSnapshots().getSnapshot(position).getReference().delete();
                         }else{
@@ -176,27 +182,31 @@ public class CartActivity extends AppCompatActivity {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        cartReference.collection("myCart")
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            if(task.getResult().size() > 0) {
-                                                dialogInterface.dismiss();
-                                                uploadPrescription();
+                        if(bitmap != null){
+                            cartReference.collection("myCart")
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                if(task.getResult().size() > 0) {
+                                                    dialogInterface.dismiss();
+                                                    addToCart();
+                                                } else {
+                                                    Toast.makeText(CartActivity.this,
+                                                            "Add items to cart",
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
                                             } else {
                                                 Toast.makeText(CartActivity.this,
                                                         "Add items to cart",
                                                         Toast.LENGTH_SHORT).show();
                                             }
-                                        } else {
-                                            Toast.makeText(CartActivity.this,
-                                                    "Add items to cart",
-                                                    Toast.LENGTH_SHORT).show();
                                         }
-                                    }
-                                });
+                                    });
+                        }else{
+                            errorImageTv.setText("Please upload a prescription");
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -254,31 +264,33 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
-    protected void uploadPrescription(){
-        if(bitmap != null){
-            StorageReference reference = storage.getReference().child("prescriptions/" +
-                    UUID.randomUUID().toString());
+    protected void uploadPrescription(String _id){
+        StorageReference reference = storage.getReference().child("prescriptions/" +
+                UUID.randomUUID().toString());
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] data = baos.toByteArray();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
 
-            UploadTask uploadTask = reference.putBytes(data);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(CartActivity.this, e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    addToCart();
-                }
-            });
-        }else{
-            errorImageTv.setText("Please upload a prescription");
-        }
+        UploadTask uploadTask = reference.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(CartActivity.this, e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+                firebaseFirestore.collection("transaction").document(user.getUid())
+                        .collection("myTransactions").document(_id)
+                        .delete();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(CartActivity.this, "Transaction Completed",
+                        Toast.LENGTH_SHORT).show();
+                bitmap = null;
+                finish();
+            }
+        });
     }
 
     protected void addToCart(){
@@ -293,7 +305,6 @@ public class CartActivity extends AppCompatActivity {
         transaction.put("status", "Pending");
         transaction.put("totalAmount", String.valueOf(total));
 
-        //
         DocumentReference docRef = firebaseFirestore
                 .collection("transaction")
                 .document(user.getUid());
@@ -306,13 +317,14 @@ public class CartActivity extends AppCompatActivity {
                 documentReference.update(transaction);
                 addItems(documentReference.getId());
             }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(CartActivity.this, "Error adding transaction. Please try again.",
+                        Toast.LENGTH_SHORT).show();
+            }
         });
-
-        //TODO ERROR HANDLING
-
-
-        bitmap = null;
-        finish();
     }
 
     protected void addItems(String _id){
@@ -330,13 +342,30 @@ public class CartActivity extends AppCompatActivity {
                                         .set(cart);
                                 document.getReference().delete();
                             }
-                            Toast.makeText(CartActivity.this, "Items added",
-                                    Toast.LENGTH_SHORT).show();
+                            uploadPrescription(_id);
                         } else {
-                            Toast.makeText(CartActivity.this, "Error adding items",
+                            firebaseFirestore.collection("transaction").document(user.getUid())
+                                    .collection("myTransactions").document(_id)
+                                    .delete();
+                            Toast.makeText(CartActivity.this, "Error adding items. Please try again.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    protected void newValue(String _id){
+        firebaseFirestore.collection("items").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if(document.getReference().getId().equals(_id)){
+                            document.getReference().update("itemQuantity", document.getLong("itemQuantity") + 1);
+                        }
+                    }
+                }
+            }
+        });
     }
 }

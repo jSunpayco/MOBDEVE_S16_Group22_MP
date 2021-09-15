@@ -36,6 +36,10 @@ public class ItemsModel {
         return itemQuantity;
     }
 
+    public void setItemQuantity(int itemQuantity) {
+        this.itemQuantity = itemQuantity;
+    }
+
     public String getItemPath() {
         return itemPath;
     }
