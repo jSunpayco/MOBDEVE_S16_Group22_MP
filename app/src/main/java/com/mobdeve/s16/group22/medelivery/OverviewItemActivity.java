@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,14 +32,20 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class OverviewItemActivity extends AppCompatActivity {
     private TextView dateTv,totalAmountTv,statusTv,idTV;
+    private TextView feedBackTV;
+    private Button submitBtn;
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseUser user;
     private FirestoreRecyclerAdapter adapter;
     private DocumentReference overviewItemReference;
     private String id;
+    private String totalAmount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -51,6 +58,8 @@ public class OverviewItemActivity extends AppCompatActivity {
         this.totalAmountTv = findViewById(R.id.totalAmountTv);
         this.statusTv = findViewById(R.id.statusTv);
         this.idTV = findViewById(R.id.idTV);
+        this.feedBackTV = findViewById(R.id.feedbackEt);
+        this.submitBtn = findViewById(R.id.submitBtn);
 
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
@@ -77,7 +86,8 @@ public class OverviewItemActivity extends AppCompatActivity {
                     dateTv.setText(value.getString("date"));
                     statusTv.setText(value.getString("status"));
                     idTV.setText(value.getString("transactionID"));
-                    totalAmountTv.setText("Total Amount: ₱" + value.getString("totalAmount"));
+                    totalAmount =  value.getString("totalAmount");
+                    totalAmountTv.setText("Total Amount: ₱" + totalAmount);
                 } else {
                     Toast.makeText(OverviewItemActivity.this,"Current data: null",
                             Toast.LENGTH_SHORT).show();
@@ -108,6 +118,26 @@ public class OverviewItemActivity extends AppCompatActivity {
         this.recyclerView.setLayoutManager(mLayoutManager);
         this.recyclerView.setAdapter(this.adapter);
         this.adapter.notifyDataSetChanged();
+        this.submitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Feedback = feedBackTV.getText().toString();
+                String date = dateTv.getText().toString();
+                String status = statusTv.getText().toString();
+                String tAmount = totalAmount;
+                String currentId = idTV.getText().toString();
+
+                Map<String,Object> feedback = new HashMap<>();
+                feedback.put("feedback",Feedback);
+                feedback.put("date",date);
+                feedback.put("status","Done");
+                feedback.put("totalAmount",tAmount);
+                feedback.put("transactionID",currentId);
+
+                documentReference.set(feedback);
+                Toast.makeText(OverviewItemActivity.this, "Submitted Feedback", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
