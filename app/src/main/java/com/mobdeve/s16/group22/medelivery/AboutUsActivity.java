@@ -20,8 +20,6 @@ public class AboutUsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_aboutus);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FirebaseFirestore fstore = FirebaseFirestore.getInstance();
-
         TextView aboutTv, authorATv, authorBTv, authorEmailATv, authorEmailBTv;
 
         aboutTv = findViewById(R.id.aboutTv);
@@ -31,7 +29,7 @@ public class AboutUsActivity extends AppCompatActivity {
         authorEmailBTv = findViewById(R.id.authorEmailBTv);
 
 
-        DocumentReference documentReference = fstore.collection("information").document("finalInformation");
+        DocumentReference documentReference = FirebaseHelper.getInfoDocumentReference();
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot value, FirebaseFirestoreException error) {
@@ -40,11 +38,11 @@ public class AboutUsActivity extends AppCompatActivity {
                     return;
                 }
                 if(value != null && value.exists()) {
-                    aboutTv.setText(value.getString("bodyText"));
-                    authorATv.setText(value.getString("authorA"));
-                    authorEmailATv.setText(value.getString("emailA"));
-                    authorBTv.setText(value.getString("authorB"));
-                    authorEmailBTv.setText(value.getString("emailB"));
+                    aboutTv.setText(value.getString(FirebaseHelper.BODY_FIELD));
+                    authorATv.setText(value.getString(FirebaseHelper.AUTHORA_FIELD));
+                    authorEmailATv.setText(value.getString(FirebaseHelper.EMAILA_FIELD));
+                    authorBTv.setText(value.getString(FirebaseHelper.AUTHORB_FIELD));
+                    authorEmailBTv.setText(value.getString(FirebaseHelper.EMAILB_FIELD));
                 } else {
                     System.out.print("current data: null");
                 }

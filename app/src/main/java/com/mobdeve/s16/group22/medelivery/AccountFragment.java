@@ -30,9 +30,6 @@ public class AccountFragment extends Fragment{
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_account, container, false);
-        FirebaseFirestore fstore = FirebaseFirestore.getInstance();
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = firebaseAuth.getCurrentUser();
 
         TextView myFnameTv, myLnameTv, myEmailTv, myAgeTv, myAddressTv;
 
@@ -43,7 +40,7 @@ public class AccountFragment extends Fragment{
         myAddressTv = v.findViewById(R.id.myAddressTv);
 
 
-        DocumentReference documentReference = fstore.collection("users").document(user.getUid());
+        DocumentReference documentReference = FirebaseHelper.getUserDocumentReference();
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot value, FirebaseFirestoreException error) {
@@ -52,11 +49,11 @@ public class AccountFragment extends Fragment{
                     return;
                 }
                 if(value != null && value.exists()) {
-                    myFnameTv.setText(value.getString("fname"));
-                    myLnameTv.setText(value.getString("lname"));
-                    myEmailTv.setText(value.getString("email"));
-                    myAgeTv.setText(value.getString("age"));
-                    myAddressTv.setText(value.getString("address"));
+                    myFnameTv.setText(value.getString(FirebaseHelper.FNAME_FIELD));
+                    myLnameTv.setText(value.getString(FirebaseHelper.LNAME_FIELD));
+                    myEmailTv.setText(value.getString(FirebaseHelper.EMAIL_FIELD));
+                    myAgeTv.setText(value.getString(FirebaseHelper.AGE_FIELD));
+                    myAddressTv.setText(value.getString(FirebaseHelper.ADDRESS_FIELD));
                 } else {
                     System.out.print("current data: null");
                 }

@@ -3,6 +3,7 @@ package com.mobdeve.s16.group22.medelivery;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -13,9 +14,9 @@ public class HandbookActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_handbook);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("Medicine Handbook");
 
         this.webV = findViewById(R.id.webV);
         this.webV.setWebViewClient(new WebViewClient());

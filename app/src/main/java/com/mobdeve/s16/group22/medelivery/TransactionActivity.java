@@ -1,6 +1,7 @@
 package com.mobdeve.s16.group22.medelivery;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +38,7 @@ public class TransactionActivity extends AppCompatActivity {
     private EditText feedbackEt;
     private Button submitBtn;
     private RecyclerView recyclerView;
-    private FirebaseFirestore firebaseFirestore;
-    private FirebaseUser user;
     private FirestoreRecyclerAdapter adapter;
-    private DocumentReference overviewItemReference;
     private String id;
     private String totalAmount;
     private RatingBar ratingBar;
@@ -62,21 +60,14 @@ public class TransactionActivity extends AppCompatActivity {
         this.submitBtn = findViewById(R.id.submitBtn);
         this.ratingBar = findViewById(R.id.ratingBar);
 
-
-        this.firebaseFirestore = FirebaseFirestore.getInstance();
-        this.user = FirebaseAuth.getInstance().getCurrentUser();
-
         Intent i = getIntent();
-        id = i.getStringExtra("TRANSACTION_REFERENCE");
+        id = i.getStringExtra(FirebaseHelper.TRANSACTION_INTENT);
 
         this.recyclerView = findViewById(R.id.transactionRecyclerView);
-        this.overviewItemReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
 
-        DocumentReference documentReference = this.overviewItemReference.collection("myTransactions").
-                document(id);
-        Query q = documentReference.collection("itemList");
+        Query q = FirebaseHelper.getItemListCollectionReference(id);
 
-        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        FirebaseHelper.getMyTransactionDocumentReference(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot value, FirebaseFirestoreException error) {
                 if(error!=null) {
@@ -85,14 +76,20 @@ public class TransactionActivity extends AppCompatActivity {
                     return;
                 }
                 if(value != null && value.exists()) {
-                    dateTv.setText(value.getString("date"));
-                    statusTv.setText(value.getString("status"));
-                    idTV.setText(value.getString("transactionID"));
-                    totalAmount =  value.getString("totalAmount");
+                    dateTv.setText(value.getString(FirebaseHelper.DATE_FIELD));
+                    statusTv.setText(value.getString(FirebaseHelper.STATUS_FIELD));
+                    idTV.setText(value.getString(FirebaseHelper.TID_FIELD));
+                    totalAmount =  value.getString(FirebaseHelper.SUBTOTAL_FIELD);
                     totalAmountTv.setText("Total Amount: ₱" + totalAmount);
-                    ratingBar.setRating(Float.parseFloat(value.getString("rating")));
-                    if(value.getString("status").equals("Done")){
-                        feedbackEt.setText(value.getString("feedback"));
+                    ratingBar.setRating(Float.parseFloat(value.getString(FirebaseHelper.RATING_FIELD)));
+
+                    if(value.getString(FirebaseHelper.STATUS_FIELD).equals("Done")){
+                        feedbackEt.setText(value.getString(FirebaseHelper.FEEDBACK_FIELD));
+                        statusTv.setTextColor(Color.parseColor("#00FF00"));
+                    }else if(value.getString(FirebaseHelper.STATUS_FIELD).equals("Pending")){
+                        statusTv.setTextColor(Color.parseColor("#FF7F50"));
+                    }else if(value.getString(FirebaseHelper.STATUS_FIELD).equals("Canceled")){
+                        statusTv.setTextColor(Color.parseColor("#FF0000"));
                     }
 
                 } else {
@@ -130,19 +127,18 @@ public class TransactionActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String Feedback = feedBackTV.getText().toString();
                 String date = dateTv.getText().toString();
-                String status = statusTv.getText().toString();
                 String tAmount = totalAmount;
                 String currentId = idTV.getText().toString();
                 String rating = String.valueOf(ratingBar.getRating());
                 Map<String,Object> feedback = new HashMap<>();
-                feedback.put("feedback",Feedback);
-                feedback.put("date",date);
-                feedback.put("status","Done");
-                feedback.put("totalAmount",tAmount);
-                feedback.put("transactionID",currentId);
-                feedback.put("rating",rating);
+                feedback.put(FirebaseHelper.FEEDBACK_FIELD,Feedback);
+                feedback.put(FirebaseHelper.DATE_FIELD,date);
+                feedback.put(FirebaseHelper.STATUS_FIELD,"Done");
+                feedback.put(FirebaseHelper.SUBTOTAL_FIELD,tAmount);
+                feedback.put(FirebaseHelper.TID_FIELD,currentId);
+                feedback.put(FirebaseHelper.RATING_FIELD,rating);
 
-                documentReference.set(feedback);
+                FirebaseHelper.getMyTransactionDocumentReference(id).set(feedback);
                 Toast.makeText(TransactionActivity.this, "Submitted Feedback", Toast.LENGTH_SHORT).show();
             }
         });
@@ -160,7 +156,7 @@ public class TransactionActivity extends AppCompatActivity {
         this.adapter.stopListening();
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         int count = getSupportFragmentManager().getBackStackEntryCount();
         if (count == 0) {
@@ -169,5 +165,5 @@ public class TransactionActivity extends AppCompatActivity {
         } else {
             getSupportFragmentManager().popBackStack();
         }
-    }
+    }*/
 }

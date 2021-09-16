@@ -54,25 +54,17 @@ public class CartActivity extends AppCompatActivity {
     private TextView cartTotalTv, errorImageTv;
 
     private RecyclerView recyclerView;
-    private FirebaseFirestore firebaseFirestore;
-    private FirebaseUser user;
     private FirestoreRecyclerAdapter adapter;
-    private DocumentReference cartReference;
-    private FirebaseStorage storage;
 
     private Bitmap bitmap;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private int total;
-
-    private boolean isUpload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_cart);
-
-        this.storage = FirebaseStorage.getInstance();
 
         this.checkoutBtn = findViewById(R.id.checkoutBtn);
         this.prescriptionBtn = findViewById(R.id.prescriptionBtn);
@@ -82,11 +74,8 @@ public class CartActivity extends AppCompatActivity {
         this.errorImageTv.setText("");
 
         this.recyclerView = findViewById(R.id.cartRecyclerView);
-        this.firebaseFirestore = FirebaseFirestore.getInstance();
-        this.user = FirebaseAuth.getInstance().getCurrentUser();
-        this.cartReference = firebaseFirestore.collection("cart").document(this.user.getUid());
 
-        Query q = this.cartReference.collection("myCart");
+        Query q = FirebaseHelper.getMyCartCollectionReference();
 
         FirestoreRecyclerOptions<CartModel> options = new FirestoreRecyclerOptions.Builder<CartModel>()
                 .setQuery(q, CartModel.class)
@@ -130,9 +119,9 @@ public class CartActivity extends AppCompatActivity {
                             holder.cartPriceTv.setText("₱ " + String.valueOf(cart.getCartPrice()));
                             holder.cartStockTv.setText("Qty: " + String.valueOf(cart.getCartQuantity()));
 
-                            cartReference.collection("myCart").document(cart.getCartUid()).
-                                    update("cartQuantity", String.valueOf(tempQuantity),
-                                            "cartPrice", String.valueOf(tempPrice));
+                            FirebaseHelper.getCartDocumentReference().
+                                    update(FirebaseHelper.CQUANTITY_FIELD, String.valueOf(tempQuantity),
+                                            FirebaseHelper.CPRICE_FIELD, String.valueOf(tempPrice));
                         }
 
                         updateTotal();
@@ -161,7 +150,7 @@ public class CartActivity extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 if(result.getResultCode() == RESULT_OK && result.getData() != null){
                     Bundle bundle = result.getData().getExtras();
-                    bitmap = (Bitmap) bundle.get("data");
+                    bitmap = (Bitmap) bundle.get(FirebaseHelper.DATA_INTENT);
                 }
             }
         });
@@ -177,7 +166,7 @@ public class CartActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if(bitmap != null){
-                            cartReference.collection("myCart")
+                            FirebaseHelper.getMyCartCollectionReference()
                                     .get()
                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
@@ -241,7 +230,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
     protected void updateTotal(){
-        cartReference.collection("myCart")
+        FirebaseHelper.getMyCartCollectionReference()
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -259,7 +248,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
     protected void uploadPrescription(String _id){
-        StorageReference reference = storage.getReference().child("prescriptions/" +
+        StorageReference reference = FirebaseHelper.getStorageInstance().getReference().child("prescriptions/" +
                 _id);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -272,8 +261,7 @@ public class CartActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(CartActivity.this, e.getMessage(),
                         Toast.LENGTH_SHORT).show();
-                firebaseFirestore.collection("transaction").document(user.getUid())
-                        .collection("myTransactions").document(_id)
+                FirebaseHelper.getMyCartCollectionReference().document(_id)
                         .delete();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -285,7 +273,7 @@ public class CartActivity extends AppCompatActivity {
                 finish();
 
                 Intent i = new Intent(getApplicationContext(), TransactionActivity.class);
-                i.putExtra("TRANSACTION_REFERENCE", _id);
+                i.putExtra(FirebaseHelper.TRANSACTION_INTENT, _id);
                 startActivity(i);
             }
         });
@@ -299,19 +287,16 @@ public class CartActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         String date = dateFormat.format(calendar.getTime());
 
-        transaction.put("date", date);
-        transaction.put("status", "Pending");
-        transaction.put("totalAmount", String.valueOf(total));
-        transaction.put("rating", "0");
-        DocumentReference docRef = firebaseFirestore
-                .collection("transaction")
-                .document(user.getUid());
+        transaction.put(FirebaseHelper.DATE_FIELD, date);
+        transaction.put(FirebaseHelper.STATUS_FIELD, "Pending");
+        transaction.put(FirebaseHelper.SUBTOTAL_FIELD, String.valueOf(total));
+        transaction.put(FirebaseHelper.RATING_FIELD, "0");
 
-        docRef.collection("myTransactions")
+        FirebaseHelper.getMyTransactionCollectionReference()
                 .add(transaction).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-                transaction.put("transactionID", documentReference.getId());
+                transaction.put(FirebaseHelper.TID_FIELD, documentReference.getId());
                 documentReference.update(transaction);
                 addItems(documentReference.getId());
             }
@@ -326,7 +311,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
     protected void addItems(String _id){
-        cartReference.collection("myCart")
+        FirebaseHelper.getMyCartCollectionReference()
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -334,9 +319,7 @@ public class CartActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 CartModel cart = document.toObject(CartModel.class);
-                                firebaseFirestore.collection("transaction").document(user.getUid())
-                                        .collection("myTransactions").document(_id)
-                                        .collection("itemList").document(cart.getCartUid())
+                                FirebaseHelper.getTransactionItemDocumentReference(_id, cart.getCartUid())
                                         .set(cart);
                                 document.getReference().delete();
                                 adapter.notifyDataSetChanged();
@@ -348,13 +331,14 @@ public class CartActivity extends AppCompatActivity {
     }
 
     protected void newValue(String _id){
-        firebaseFirestore.collection("items").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseHelper.getItemsCollectionReference().get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if(document.getReference().getId().equals(_id)){
-                            document.getReference().update("itemQuantity", document.getLong("itemQuantity") + 1);
+                            document.getReference().update(FirebaseHelper.IQUANTITY_FIELD,
+                                    document.getLong(FirebaseHelper.IQUANTITY_FIELD) + 1);
                         }
                     }
                 }

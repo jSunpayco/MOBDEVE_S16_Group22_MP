@@ -19,12 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,19 +30,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
 
 public class ItemListActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
-    private FirebaseFirestore firebaseFirestore;
     private FirestoreRecyclerAdapter adapter;
-    private DocumentReference cartReference;
-    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +48,10 @@ public class ItemListActivity extends AppCompatActivity {
 
         this.recyclerView = findViewById(R.id.itemRecyclerVIew);
         this.swipeRefreshLayout = findViewById(R.id.itemScrollView);
-        this.firebaseFirestore = FirebaseFirestore.getInstance();
-        this.user = FirebaseAuth.getInstance().getCurrentUser();
-        this.cartReference = firebaseFirestore.collection("cart").document(this.user.getUid());
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
 
-        Query q = firebaseFirestore.collection("items");
+        Query q = FirebaseHelper.getItemsCollectionReference();
 
         FirestoreRecyclerOptions<ItemsModel> options = new FirestoreRecyclerOptions.Builder<ItemsModel>()
                 .setQuery(q, ItemsModel.class)
@@ -94,7 +83,7 @@ public class ItemListActivity extends AppCompatActivity {
                     public void onClick(View view) {
 
                         if(item.getItemQuantity() > 0){
-                            cartReference.collection("myCart").document(item.getItemUid()).
+                            FirebaseHelper.getMyCartDocumentReference(item.getItemUid()).
                                     get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -109,9 +98,9 @@ public class ItemListActivity extends AppCompatActivity {
                                         tempQ = Integer.parseInt(tempCart.getCartQuantity()) + 1;
                                         tempP = Integer.parseInt(tempCart.getCartPrice()) + item.getItemPrice();
 
-                                        cartReference.collection("myCart").document(item.getItemUid()).
-                                                update("cartQuantity", String.valueOf(tempQ),
-                                                        "cartPrice", String.valueOf(tempP))
+                                        FirebaseHelper.getMyCartDocumentReference(item.getItemUid()).
+                                                update(FirebaseHelper.CQUANTITY_FIELD, String.valueOf(tempQ),
+                                                        FirebaseHelper.CPRICE_FIELD, String.valueOf(tempP))
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
@@ -128,12 +117,12 @@ public class ItemListActivity extends AppCompatActivity {
                                                 });
                                     }else{
                                         Map<String, Object> data = new HashMap<>();
-                                        data.put("cartUid", item.getItemUid());
-                                        data.put("cartName", item.getItemName());
-                                        data.put("cartQuantity", String.valueOf(1));
-                                        data.put("cartPrice", String.valueOf(item.getItemPrice()));
+                                        data.put(FirebaseHelper.CID_FIELD, item.getItemUid());
+                                        data.put(FirebaseHelper.CNAME_FIELD, item.getItemName());
+                                        data.put(FirebaseHelper.CQUANTITY_FIELD, String.valueOf(1));
+                                        data.put(FirebaseHelper.CPRICE_FIELD, String.valueOf(item.getItemPrice()));
 
-                                        cartReference.collection("myCart").document(item.getItemUid()).
+                                        FirebaseHelper.getMyCartDocumentReference(item.getItemUid()).
                                                 set(data).addOnSuccessListener(new OnSuccessListener<Void>(){
                                             @Override
                                             public void onSuccess(Void v){
@@ -150,8 +139,8 @@ public class ItemListActivity extends AppCompatActivity {
                                     }
 
                                     item.setItemQuantity(item.getItemQuantity() - 1);
-                                    firebaseFirestore.collection("items").document(item.getItemUid())
-                                            .update("itemQuantity", item.getItemQuantity());
+                                    FirebaseHelper.getItemDocumentReference(item.getItemUid())
+                                            .update(FirebaseHelper.IQUANTITY_FIELD, item.getItemQuantity());
                                 }
                             });
                         }

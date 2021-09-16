@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         // if no user is logged in, start login activity
-        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+        if(FirebaseHelper.getFirebaseAuth().getCurrentUser() == null){
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         }else{
 

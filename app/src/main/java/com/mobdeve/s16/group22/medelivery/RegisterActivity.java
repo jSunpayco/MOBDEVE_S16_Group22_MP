@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -14,7 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,9 +27,6 @@ public class RegisterActivity extends AppCompatActivity {
     EditText registerFNameET, registerLNameET, registerMailET, registerPasswordET, registerAgeET,
             registerAddressET;
     Button registerBtn, goBackBtn;
-    FirebaseAuth fAuth;
-    FirebaseFirestore fstore;
-    String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +42,6 @@ public class RegisterActivity extends AppCompatActivity {
         this.registerAddressET = findViewById(R.id.registerAddressET);
         this.registerBtn = findViewById(R.id.registerBtn);
         this.goBackBtn = findViewById(R.id.goBackBtn);
-
-        this.fAuth = FirebaseAuth.getInstance();
-        this.fstore = FirebaseFirestore.getInstance();
 
         this.registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,30 +88,25 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                fAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                FirebaseHelper.getFirebaseAuth().createUserWithEmailAndPassword(email, pass)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
 
                             // Add user details to Database
-                            userID = fAuth.getCurrentUser().getUid();
-                            DocumentReference docRef = fstore.collection("users").document(userID);
                             Map<String,Object> user = new HashMap<>();
-                            user.put("fname", fname);
-                            user.put("lname", lname);
-                            user.put("email", email);
-                            user.put("age", age);
-                            user.put("address", address);
-                            docRef.set(user);
+                            user.put(FirebaseHelper.FNAME_FIELD, fname);
+                            user.put(FirebaseHelper.LNAME_FIELD, lname);
+                            user.put(FirebaseHelper.EMAIL_FIELD, email);
+                            user.put(FirebaseHelper.AGE_FIELD, age);
+                            user.put(FirebaseHelper.ADDRESS_FIELD, address);
+                            FirebaseHelper.getUserDocumentReference().set(user);
 
                             Map<String, Object> data = new HashMap<>();
-                            data.put("filler", "filler");
-                            fstore.collection("transaction").document(userID).set(data);
-                            fstore.collection("cart").document(userID).set(data);
-
-                            /*fstore.collection("transaction").document(userID)
-                                    .collection("myTransactions").document("sampleTransaction")
-                                    .delete();*/
+                            data.put(FirebaseHelper.FILLER_FIELD, "filler");
+                            FirebaseHelper.getTransactionDocumentReference().set(data);
+                            FirebaseHelper.getCartDocumentReference().set(data);
 
                             Toast.makeText(RegisterActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));

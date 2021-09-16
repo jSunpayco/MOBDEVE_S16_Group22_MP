@@ -21,7 +21,6 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText loginMailET, loginPasswordET;
     Button loginBtn, noAccountBtn;
-    FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +32,6 @@ public class LoginActivity extends AppCompatActivity {
         this.loginPasswordET = findViewById(R.id.loginPasswordET);
         this.loginBtn = findViewById(R.id.loginBtn);
         this.noAccountBtn = findViewById(R.id.noAccountBtn);
-
-        this.fAuth = FirebaseAuth.getInstance();
 
         this.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +49,8 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                fAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                FirebaseHelper.getFirebaseAuth().signInWithEmailAndPassword(email, pass).
+                        addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
@@ -60,7 +58,8 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
                         }else{
-                            Toast.makeText(LoginActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Error: " +
+                                    task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

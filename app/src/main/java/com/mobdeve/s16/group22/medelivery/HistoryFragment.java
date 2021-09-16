@@ -26,11 +26,7 @@ import com.google.firebase.firestore.Query;
 
 public class HistoryFragment extends Fragment {
     private RecyclerView recyclerView;
-    private FirebaseFirestore firebaseFirestore;
-    private FirebaseUser user;
-    private FirebaseAuth mAuth;
     private FirestoreRecyclerAdapter adapter;
-    private DocumentReference historyReference;
     private View view;
 
     public HistoryFragment() {
@@ -41,13 +37,9 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_history, container, false);
-        this.mAuth = FirebaseAuth.getInstance();
-        this.firebaseFirestore = FirebaseFirestore.getInstance();
-        this.user = mAuth.getCurrentUser();
         this.recyclerView = view.findViewById(R.id.historyRecyclerView);
-        this.historyReference = firebaseFirestore.collection("transaction").document(this.user.getUid());
-        Log.d("TAG", "User ID: " + this.user.getUid());
-        Query q = this.historyReference.collection("myTransactions");
+
+        Query q = FirebaseHelper.getMyTransactionCollectionReference();
 
         FirestoreRecyclerOptions<HistoryModel> options = new FirestoreRecyclerOptions.Builder<HistoryModel>()
                 .setQuery(q, HistoryModel.class)
@@ -74,7 +66,7 @@ public class HistoryFragment extends Fragment {
                     public void onClick(View view) {
                         Intent i = new Intent(getActivity(), TransactionActivity.class);
                         String temp = model.getTransactionID();
-                        i.putExtra("TRANSACTION_REFERENCE", temp);
+                        i.putExtra(FirebaseHelper.TRANSACTION_INTENT, temp);
                         startActivity(i);
                     }
                 });
