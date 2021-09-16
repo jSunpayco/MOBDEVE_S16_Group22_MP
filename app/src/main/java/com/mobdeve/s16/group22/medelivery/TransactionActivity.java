@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,8 @@ public class TransactionActivity extends AppCompatActivity {
     private DocumentReference overviewItemReference;
     private String id;
     private String totalAmount;
+    private RatingBar ratingBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -57,6 +60,8 @@ public class TransactionActivity extends AppCompatActivity {
         this.feedbackEt = findViewById(R.id.feedbackEt);
         this.feedBackTV = findViewById(R.id.feedbackEt);
         this.submitBtn = findViewById(R.id.submitBtn);
+        this.ratingBar = findViewById(R.id.ratingBar);
+
 
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
@@ -85,7 +90,7 @@ public class TransactionActivity extends AppCompatActivity {
                     idTV.setText(value.getString("transactionID"));
                     totalAmount =  value.getString("totalAmount");
                     totalAmountTv.setText("Total Amount: ₱" + totalAmount);
-
+                    ratingBar.setRating(Float.parseFloat(value.getString("rating")));
                     if(value.getString("status").equals("Done")){
                         feedbackEt.setText(value.getString("feedback"));
                     }
@@ -128,13 +133,14 @@ public class TransactionActivity extends AppCompatActivity {
                 String status = statusTv.getText().toString();
                 String tAmount = totalAmount;
                 String currentId = idTV.getText().toString();
-
+                String rating = String.valueOf(ratingBar.getRating());
                 Map<String,Object> feedback = new HashMap<>();
                 feedback.put("feedback",Feedback);
                 feedback.put("date",date);
                 feedback.put("status","Done");
                 feedback.put("totalAmount",tAmount);
                 feedback.put("transactionID",currentId);
+                feedback.put("rating",rating);
 
                 documentReference.set(feedback);
                 Toast.makeText(TransactionActivity.this, "Submitted Feedback", Toast.LENGTH_SHORT).show();

@@ -160,13 +160,13 @@
         android:gravity="start|top"
         android:hint="Feedback"
         android:inputType="textMultiLine"
+        android:windowSoftInputMode="adjustPan"
         app:layout_constraintBottom_toTopOf="@+id/submitBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
-        tools:ignore="TouchTargetSizeCheck"
-        android:windowSoftInputMode="adjustPan"/>
+        app:layout_constraintVertical_bias="0.614"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <LinearLayout
         android:id="@+id/linearLayout5"
@@ -214,5 +214,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="1.0" />
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/feedbackEt"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

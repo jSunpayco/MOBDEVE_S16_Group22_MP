@@ -302,7 +302,7 @@ public class CartActivity extends AppCompatActivity {
         transaction.put("date", date);
         transaction.put("status", "Pending");
         transaction.put("totalAmount", String.valueOf(total));
-
+        transaction.put("rating", "0");
         DocumentReference docRef = firebaseFirestore
                 .collection("transaction")
                 .document(user.getUid());
