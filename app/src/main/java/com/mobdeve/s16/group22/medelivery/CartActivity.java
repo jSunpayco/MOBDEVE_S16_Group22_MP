@@ -116,10 +116,10 @@ public class CartActivity extends AppCompatActivity {
                             cart.setCartPrice(String.valueOf(tempPrice));
                             cart.setCartQuantity(String.valueOf(tempQuantity));
 
-                            holder.cartPriceTv.setText("₱ " + String.valueOf(cart.getCartPrice()));
-                            holder.cartStockTv.setText("Qty: " + String.valueOf(cart.getCartQuantity()));
+                            holder.cartPriceTv.setText("₱ " + cart.getCartPrice());
+                            holder.cartStockTv.setText("Qty: " + tempQuantity);
 
-                            FirebaseHelper.getCartDocumentReference().
+                            FirebaseHelper.getMyCartDocumentReference(cart.getCartUid()).
                                     update(FirebaseHelper.CQUANTITY_FIELD, String.valueOf(tempQuantity),
                                             FirebaseHelper.CPRICE_FIELD, String.valueOf(tempPrice));
                         }
